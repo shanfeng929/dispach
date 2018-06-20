@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.RoleDao">
+
+	<resultMap type="com.sunyard.dispatch.common.model.RoleNew" id="Role">
+		<id property="id" column="id"/>
+		<result property="code" column="code"/>
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status"/>
+		<result property="creatorName" column="creatorName"/> 
+		<result property="modifierName" column="modifierName"/>
+		
+		<collection property="roleAuth" ofType="com.sunyard.dispatch.common.model.RoleAuth">
+			<result property="roleId" column="ROLE_ID" />
+			<result property="authId" column="AUTH_ID" />
+		</collection> 
+	   	<collection property="authorities"
+			ofType="com.sunyard.dispatch.common.model.Authority" resultMap="Authority"
+			columnPrefix="auth_" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.common.model.Authority" id="Authority">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	
+	<select id="queryAllRole" resultMap="Role" parameterType="com.sunyard.dispatch.common.model.form.RoleForm">
+		SELECT TEMP_OUTER.* FROM (
+		select * from (SELECT TEMP_INNER.*, row_number() over(order by temp_inner.date_created desc) as rn FROM (	
+			select t1.id,t1.name,t1.code,t1.description,t1.creator_id,t1.modifier_id,t1.date_created,t1.date_modified,t1.data_status,
+			(select login_name from sys_user_tb where id=t1.creator_id) as creatorName,
+			(select login_name from sys_user_tb where id=t1.modifier_id) as modifierName
+			 from sys_role_tb t1
+		     where t1.data_status in (0,1,2,3,4)
+			<if test="name != null  &amp;&amp; name.length()>0">
+	         and t1.name LIKE　'%${name}%' 
+			</if>
+			) temp_inner) where rn &lt; #{end}
+		) temp_outer where temp_outer.rn &gt; #{start}
+		
+	</select>
+	
+    <select id="selectOneRoleById" parameterType="java.lang.Integer"  resultMap="Role">
+		select 
+		t1.*,
+		t3.id auth_id,
+		t3.name auth_name 
+		from sys_role_tb t1
+		left join sys_map_role_auth_tb t2 on t1.id=t2.role_id
+		left join sys_authority_tb t3 on t3.id=t2.auth_id
+		where t1.id=#{id}
+	</select> 
+	
+	<select id="selectRoleNameById"   resultType="java.lang.String">
+		select name from sys_role_tb where id=#{id}
+	</select>
+	
+	<select id="getCount" resultType="java.lang.Integer"  parameterType="com.sunyard.dispatch.common.model.form.RoleForm">
+		select count(id) from sys_role_tb t1
+		<where>
+			<if test="name != null  &amp;&amp; name.length()>0">
+	         and t1.name LIKE　'%${name}%' 
+			</if>
+		</where>
+	</select>
+	
+	<update id="batchUpdate" parameterType="list">
+		update sys_role_tb set
+		data_status=4
+		where 
+		id in 
+	 <foreach collection="list" index="index" item="item" open="(" separator="," close=")">   
+        #{item}   
+     </foreach>  
+	</update>
+	
+	<update id="batchDelete" parameterType="list">
+		delete from sys_role_tb where 
+		id in 
+	 <foreach collection="list" index="index" item="item" open="(" separator="," close=")">   
+        #{item}   
+     </foreach>  
+	</update>
+	
+	<select id="repeatedRole" parameterType="com.sunyard.dispatch.common.model.RoleNew" resultType="java.lang.Integer">
+		select count(id) from sys_role_tb where name=#{name}
+	</select>
+	
+	<insert id="saveRole" parameterType="com.sunyard.dispatch.common.model.RoleNew" >
+		<selectKey resultType="int" order="BEFORE" keyProperty="id">
+			select SYS_ROLE_SEQ.nextval as id from dual
+    	</selectKey>
+		insert into sys_role_tb (id,name,code,description,creator_id,date_created,data_status) values
+		(#{id,jdbcType=NUMERIC},#{name, jdbcType=VARCHAR},#{code, jdbcType=VARCHAR},#{description, jdbcType=VARCHAR},#{creator,jdbcType=NUMERIC},#{dateCreated, jdbcType=TIMESTAMP},0)
+	</insert>
+	
+	<update id="updateRole" parameterType="com.sunyard.dispatch.common.model.RoleNew">
+		update sys_role_tb set code=#{code, jdbcType=VARCHAR},name=#{name, jdbcType=VARCHAR},description=#{description, jdbcType=VARCHAR},
+		modifier_id=#{modifier,jdbcType=NUMERIC},date_modified=#{dateUpdated, jdbcType=TIMESTAMP},data_status=#{dataStatus,jdbcType=NUMERIC} where id=#{id}
+	</update>
+
+</mapper>

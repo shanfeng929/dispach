@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.MenuDao">
+	<resultMap type="com.sunyard.dispatch.common.model.MenuBean" id="MenuResult">
+		<id property="id" column="ID" />
+		<result property="code" column="CODE" />
+		<result property="text" column="NAME" />
+		<result property="controller" column="URL_" />
+		<result property="cls" column="CLS" />
+		<result property="parentId" column="PARENT_ID" />
+		<result property="leaf" column="LEAF" />
+		<result property="description" column="DESCRIPTION" />
+		<result property="view"  column="MENU_VIEW" />
+		<result property="disOrder" column="DIS_ORDER" />
+		<result property="creator" column="CREATOR_ID" />
+		<result property="modifier" column="MODIFIER_ID" />
+		<result property="dateCreated" column="DATE_CREATED" />
+		<result property="dateUpdated" column="DATE_MODIFIED" />
+		<result property="dataStatus" column="DATA_STATUS" />
+	</resultMap>
+	<!--SELECT ID,NAME ARIES,PARENT_ID-->
+	<select id="selectRootMenu" resultType="java.util.Map">
+		SELECT ID,NAME AS TEXT,PARENT_ID FROM SYS_MENU_TB WHERE PARENT_ID = 0
+	</select>
+	<!--SELECT * FROM SYS_MENU_TB-->
+	<select id="selectChildrenByGroupId"  parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT ID,NAME AS TEXT,PARENT_ID FROM SYS_MENU_TB WHERE PARENT_ID = #{parent_id}
+	</select>
+	<!--通过id查找是否有子节点,,用户增加，修改和删除-->
+	<select id="selectChildrenById" parameterType="com.sunyard.dispatch.common.model.MenuBean" resultType="java.lang.Integer">
+			SELECT ID,PARENT_ID FROM SYS_MENU_TB WHERE ID = #{id}
+			UNION ALL
+			SELECT ID,PARENT_ID FROM SYS_MENU_TB WHERE PARENT_ID = #{id}
+	</select>
+	<!--跟新菜单-->
+	<update id="updateMenu" parameterType="com.sunyard.dispatch.common.model.MenuBean">
+		UPDATE SYS_MENU_TB
+			<set>
+				<if test="text !=null">NAME = #{text},</if>
+				<if test="dateUpdated !=null">DATE_MODIFIED = current_timestamp,</if>
+				<if test="view !=null">MENU_VIEW=#{view},</if>
+				<if test="leaf !=null">LEAF=#{leaf},</if>
+				<if test="controller !=null">URL_=#{controller},</if>
+				<if test="disOrder !=null">DIS_ORDER=#{disOrder},</if>
+				<if test="code !=null">CODE=#{code},</if>
+				<if test="modifier !=null">MODIFIER_ID = #{modifier}</if>
+			</set>
+		WHERE ID = #{id}
+	</update>
+
+	<select id="selectHeaderMenu"  parameterType="java.lang.Integer"  resultMap="MenuResult">
+		SELECT * FROM SYS_MENU_TB WHERE ID=#{id} ORDER BY DIS_ORDER DESC
+	</select>
+	<!--增加菜单-->
+	<insert id="insertMenu" useGeneratedKeys="true" keyProperty="id" parameterType="com.sunyard.dispatch.common.model.MenuBean">
+		INSERT INTO SYS_MENU_TB(NAME,URL_,DIS_ORDER,PARENT_ID,DATE_CREATED,MENU_VIEW,LEAF,CREATOR_ID,DATA_STATUS,CODE)
+		VALUES(
+			#{text,jdbcType=VARCHAR},#{controller,jdbcType=VARCHAR},#{disOrder,jdbcType=NUMERIC},#{parentId,jdbcType=NUMERIC},
+			current_timestamp,#{view,jdbcType=VARCHAR},#{leaf,jdbcType=NUMERIC},#{creator,jdbcType=NUMERIC},#{dataStatus,jdbcType=NUMERIC},#{code,jdbcType=VARCHAR}
+		)
+	</insert>
+	<!--删除-->
+	<delete id="deleteMenu" parameterType="list">
+		DELETE FROM SYS_MENU_TB WHERE ID IN
+		<foreach collection="list" index="index" item="ids" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</delete>
+	<!-- 根据父节点ID、ID查询菜单信息 -->
+	<select id="selectRootMenuList" resultMap="MenuResult">
+		SELECT * FROM SYS_MENU_TB WHERE PARENT_ID =  ${pid} AND ID = ${id} ORDER BY DIS_ORDER ASC
+	</select>
+	<!-- 根据父节点ID查询下级菜单信息 --><!--ARIES-->
+	<select id="selectChildMenuList" resultMap="MenuResult">
+		SELECT DISTINCT smt.* from SYS_MENU_TB smt
+			LEFT JOIN sys_map_auth_menu_tb smamt on smamt.MENU_ID = smt.ID
+			LEFT JOIN sys_map_role_auth_tb smrat on smrat.AUTH_ID = smamt.AUTH_ID
+			LEFT JOIN sys_map_user_role_tb smurt on smurt.ROLE_ID = smrat.ROLE_ID
+			LEFT JOIN sys_user_tb sut on sut.ID = smurt.USER_ID
+			WHERE sut.LOGIN_NAME = #{login_name} and smt.PARENT_ID =  ${pid} ORDER BY DIS_ORDER ASC
+	</select>
+</mapper>

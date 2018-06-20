@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.OpLogsDao">
+
+	<resultMap type="com.sunyard.dispatch.model.OpLog" id="opLog">
+		<id property="id" column="ID" />
+		<result property="operator" column="OPERATOR" />
+		<result property="address" column="ADDRESS" />
+		<result property="operation" column="OPERATION" />
+		<result property="description" column="DESCRIPTION" />
+		<result property="level" column="LEVEL" />
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createTime" column="CREATE_TIME" />
+	</resultMap>
+
+	<select id="getOpLogList" parameterType="com.sunyard.dispatch.model.form.OpLogForm" resultMap="opLog">
+		SELECT * FROM DISPATCH_TASKETL_OPLOGS WHERE 1=1
+		<if test=" null!=createBy and ''!=createBy ">
+			AND CREATE_BY LIKE '%${createBy}%'
+		</if>
+		<if test=" null!=level and ''!=level ">
+			AND LEVEL LIKE '%${level}%'
+		</if>
+		ORDER BY CREATE_TIME DESC
+		LIMIT ${start},${limit}
+	</select>
+	
+	<select id="getOpLogCount" parameterType="com.sunyard.dispatch.model.form.OpLogForm"
+		resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_OPLOGS WHERE 1=1
+		<if test=" null!=createBy and ''!=createBy ">
+			AND CREATE_BY LIKE '%${createBy}%'
+		</if>
+		<if test=" null!=level and ''!=level ">
+			AND LEVEL LIKE '%${level}%'
+		</if>
+	</select>
+	
+	<insert id="addLogger" parameterType="com.sunyard.dispatch.model.form.OpLogForm">
+		INSERT INTO DISPATCH_TASKETL_OPLOGS(OPERATOR,ADDRESS,OPERATION,DESCRIPTION,LEVEL,CREATE_BY,CREATE_TIME) VALUES
+		(<!-- #{id}, -->
+		#{operator},
+		#{address},
+		#{operation},
+		#{description},
+		#{level},
+		#{createBy},
+		(SELECT SYSDATE())
+		)
+	</insert>
+		
+</mapper>

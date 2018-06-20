@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.EtlDisPatchDao">
+	
+	<resultMap type="com.sunyard.dispatch.model.EtlDisPatchModel"
+		id="EtlDisPatchModel">
+		<result column="ID" property="paraId"/>
+		<result column="NAME" property="paraName"/>
+		<result column="REMOTE_IP" property="reMote"/>
+		<result column="DISPLAY" property="display"/>
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.model.EtlDisPatchModel"
+		id="EtlDisParametersModel">
+		<result column="PARA_ID" property="paraId"/>
+		<result column="PARA_NAME" property="paraName"/>
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.model.form.EtlDisPatchForm"
+		id="EtlTaskMsgModel">
+		<result column="ID" property="id"/>
+		<result column="TASK_NAME" property="taskName"/>
+		<result column="TASK_CN_NAME" property="taskCnName"/>
+		<result column="TASK_DESC" property="taskDesc"/>
+		<result column="TASK_REMOTE" property="taskRemote"/>
+		<result column="TASKTYPE" property="taskType"/>
+		<result column="TASK_ADDRESS" property="taskAddress"/>
+		<result column="TASK_PARAMETER" property="taskParameter"/>
+		<result column="ERROR_NUM" property="errorNum"/>
+		<result column="TASK_ERROR" property="taskError"/>
+		<result column="TASK_LOOP" property="taskLoop"/>
+		<result column="TASK_ACTIVE" property="taskActive"/>
+		<result column="TASK_BRANCH" property="taskBranch"/>
+		<result column="TASK_CUSTOM" property="taskCustom"/>
+		<result column="JOIN_NUM" property="joinNum"/>
+		<result column="ISSUBFLOW" property="isSubflow"/>
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.model.FlowTaskParaModel"
+		id="FlowTaskParaModel">
+		<result column="ID" property="id"/>
+		<result column="FLOWID" property="flowId"/>
+		<result column="PARANAME" property="paraName"/>
+		<result column="PARAVALUE" property="paraValue"/>
+	</resultMap>
+	
+	<select id="selectRemote" resultMap="EtlDisPatchModel"
+		parameterType="com.sunyard.dispatch.model.EtlDisPatchModel">
+		SELECT ID, NAME, REMOTE_IP, NAME||' - '||REMOTE_IP||' - '||REMOTE_TYPE DISPLAY FROM DISPATCH_TASKETL_REMOTE
+		<if test="reMote != null &amp;&amp; reMote.length()>0">
+			WHERE  REMOTE_IP LIKE '%'||#{reMote}||'%'
+		</if>	
+	</select>
+	
+	<select id="selectParameters" resultMap="EtlDisParametersModel"
+		parameterType="com.sunyard.dispatch.model.EtlDisPatchModel">
+		SELECT CONCAT(PARA_NAME,CONCAT('=',PARA_VALUE)) PARA_ID,PARA_NAME FROM DISPATCH_TASKETL_PARAMETERS
+	</select>
+	
+	<!-- SELECT CONCAT(PARA_NAME,PARA_ID,'=',PARA_VALUE) PARA_ID,CONCAT(PARA_NAME,PARA_ID) PARA_NAME FROM DISPATCH_TASKETL_PARAMETERS -->
+	<!-- weilai 2016 06 13 edited 2016 8 15-->
+	<select id="pickUpParaIds" parameterType="String" resultType="String">
+		SELECT INPARAIDS FROM DISPATCH_TASKETL_TASKPARAS  WHERE TASKNAME=#{VALUE}
+	</select>
+	
+	<select id="pickUpParameters"  resultMap="FlowTaskParaModel">
+		SELECT * FROM DISPATCH_TASKETL_FLOWPARAS WHERE ID IN
+		<foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	<update id="setTaskInPara" >
+		UPDATE DISPATCH_TASKETL_TASKPARAS SET INPARAIDS=#{0} WHERE TASKNAME=#{1}
+	</update>
+	<update id="setTaskOutPara" >
+		UPDATE DISPATCH_TASKETL_TASKPARAS SET OUTPARA=#{0} WHERE TASKNAME=#{1}
+	</update>
+	<select id="findSelectedParas" parameterType="String" resultType="Integer">
+		SELECT FLOWPARAID FROM DISPATCH_TASKETL_TASKPARAS WHERE TASKNAME=${VALUE}
+	</select>
+	<!--<insert id="addParameters" parameterType="com.sunyard.dispatch.model.EtlParaModel">
+		INSERT INTO DISPATCH_TASKETL_TASKPARAS(ID,TASKID,PARANAME,PARAVALUE,PARAID,OVERALL)
+		SELECT DISPATCH_TASKETL_TASKPARAS_I_1.nextval, #{taskId},#{paraName},PARA_VALUE,PARA_ID,'是' FROM DISPATCH_TASKETL_PARAMETERS WHERE PARA_NAME=#{paraName}
+	</insert>
+	
+	<update id="notOverallUpdate" parameterType="com.sunyard.dispatch.model.EtlParaModel">
+		UPDATE DISPATCH_TASKETL_TASKPARAS SET PARANAME=#{paraName},PARAVALUE=#{paraValue},OVERALL="否"
+		WHERE ID=#{id}
+	</update>
+	
+	<update id="overallUpdate" parameterType="com.sunyard.dispatch.model.EtlParaModel">
+		UPDATE DISPATCH_TASKETL_TASKPARAS SET PARANAME=#{paraName},PARAVALUE=#{paraValue},PARAID=#{paraId},OVERALL="是"
+		WHERE ID=#{id}
+	</update>
+	
+	<select id="getOverallPara" parameterType="com.sunyard.dispatch.model.EtlParaModel" resultType="com.sunyard.dispatch.model.ParametersModel">
+		SELECT * from DISPATCH_TASKETL_PARAMETERS WHERE PARA_NAME=#{paraName}
+	</select>
+	
+	<delete id="removePara" parameterType="com.sunyard.dispatch.model.EtlParaModel">
+		DELETE FROM DISPATCH_TASKETL_TASKPARAS WHERE ID=#{id}
+	</delete>
+	-->
+	<insert id="insert" parameterType="com.sunyard.dispatch.model.form.EtlDisPatchForm">
+		INSERT INTO DISPATCH_TASKETL_TASKNAME(ID,TASK_NAME,TASK_BELONG,TASK_STATUS,TASK_ADDRESS,TASK_PARAMETER,TASK_DESC, TASK_REMOTE,TASK_ERROR ,TASK_LOOP,
+		  TASK_ACTIVE,TASK_CUSTOM,ERROR_NUM,CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE,
+		  TASK_BRANCH,JOIN_NUM
+		)
+		VALUES
+		(#{id},#{taskName},1,'4',#{taskAddress},#{taskParameter},#{taskDesc},#{taskRemote},
+		#{taskError},#{taskLoop},#{taskActive},#{taskCustom},#{errorNum},#{createBy},sysdate,
+		#{updateBy},sysdate,#{taskBranch},#{joinNum}
+		)
+	</insert>
+
+	<select  id="lastFlowId"  parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel" resultType="String">
+		SELECT CASE WHEN FLOW_TYPE=4 THEN  'iframe_draw' 
+		WHEN FLOW_TYPE=3 THEN  ID  END   FROM DISPATCH_TASKETL_FLOWNAME WHERE ID =(
+		SELECT TEMPID FROM DISPATCH_TASKETL_TASKNAME
+		WHERE ID=#{id})
+	</select>
+
+	<insert id="insertInIt"
+		parameterType="com.sunyard.dispatch.model.form.EtlDisPatchForm">
+		INSERT INTO DISPATCH_TASKETL_TASKNAME(ID,TASK_NAME,TASK_BELONG,
+		TASK_STATUS,TASK_ADDRESS,TASK_PARAMETER,TASK_DESC, TASK_REMOTE,
+		  TASK_ERROR ,
+		  TASK_ACTIVE,TASK_LOOP,TASK_CUSTOM,ERROR_NUM,CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE,
+		  TASK_BRANCH,TEMPID,JOIN_NUM
+		)
+		VALUES(
+			CONCAT('task',#{id}),'',#{taskType},'4','','','','',
+			0,1,0,'','0',#{createBy},sysdate,
+			#{updateBy},sysdate,0,#{tempId},1
+		)
+	</insert>
+	
+	<insert id="insertTaskParaInit" >
+		INSERT INTO DISPATCH_TASKETL_TASKPARAS (ID,TASKNAME,FLOWNAME)
+		VALUES (DISPATCH_TASKETL_TASKPARAS_I_1.nextval,#{0},#{1})
+	</insert>
+	
+	<insert id="insertPrev"
+		parameterType="com.sunyard.dispatch.model.form.EtlDisPatchForm">
+		INSERT INTO DISPATCH_TASKETL_TSDEPENDENCY(ID,TASK_ID,TASK_TYPE,
+		CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE) VALUES
+		(DISPATCH_TASKETL_TSDEPENDENCY_.nextval,CONCAT('task',#{id}),#{taskType},#{createBy},sysdate,
+		#{updateBy},sysdate)
+	</insert>
+
+	<update id="update"
+		parameterType="com.sunyard.dispatch.model.form.EtlDisPatchForm">
+		UPDATE DISPATCH_TASKETL_TASKNAME
+		SET TASK_NAME=#{taskName},
+		TASK_DESC=#{taskDesc},
+		TASK_REMOTE=#{taskRemote},
+		TASK_ADDRESS=#{taskAddress},
+		<if test="null!=taskParameter and ''!=taskParameter">
+			TASK_PARAMETER=#{taskParameter},
+		</if>
+		<!-- ERROR_NUM=#{errorNum}, -->
+		TASK_BELONG=#{taskType}<!-- (SELECT ID FROM DISPATCH_TASKETL_TASKBELONG WHERE BELONG_NAME=#{taskType}) -->,
+		<!-- TASK_ERROR=#{taskError}, -->
+		<!-- TASK_LOOP=#{taskLoop}, -->
+		<!-- TASK_ACTIVE=#{taskActive}, -->
+		<!-- TASK_CUSTOM=#{taskCustom}, -->
+		UPDATED_BY=#{updateBy},
+		UPDATED_DATE=sysdate,
+		TASK_BRANCH=#{taskBranch}
+		<if test="null!=joinNum and ''!=joinNum">
+			,JOIN_NUM=#{joinNum} 
+		</if>
+		WHERE ID=#{id}
+	</update>
+
+	<delete  id="delete"
+		parameterType="com.sunyard.dispatch.model.form.EtlDisPatchForm">
+		<!-- DELETE FROM DISPATCH_TASKETL_TASKNAME WHERE ID NOT IN ( ${id}) AND PID=#{pid} 2016/6/15quan.shen-->
+		DELETE FROM DISPATCH_TASKETL_TASKNAME WHERE ID NOT IN ( ${id}) AND TEMPID=#{tempId}
+	</delete>
+
+	<delete id="deleteTempId" parameterType="com.sunyard.dispatch.model.form.EtlDisPatchForm">
+		DELETE FROM DISPATCH_TASKETL_TASKNAME WHERE tempId=#{tempId} and PID is NULL
+	</delete>
+	
+	<select id ="getID" resultType="Integer">
+		<!-- CALL getID('DISPATCH_TASKETL_TASKNAME_SEQ'); -->
+		SELECT DISPATCH_TASKETL_TASKNAME_ID.NEXTVAL FROM DUAL
+	</select>
+
+	<select  id="maxTaskId" resultType="String">
+		<!-- SELECT CURRENT_VAL FROM DISPATCH_TASKETL_TASKNAME_SEQ; -->
+		SELECT DISPATCH_TASKETL_TASKNAME_ID.CURRVAL FROM DUAL
+	</select>
+	
+	<select  id="checkTaskId" resultType="String" parameterType="com.sunyard.dispatch.model.form.EtlDisPatchForm">
+		SELECT 'true' FROM DISPATCH_TASKETL_TASKNAME WHERE ID=#{id}
+	</select>
+
+	<select  id="taskIsExist" resultType="java.util.Map" parameterType="String">
+		SELECT ID,NVL(TASK_NAME,'') TASK_NAME,NVL(JOIN_NUM,0) JOIN_NUM,TASK_BELONG,NVL(TASK_DESC,'') TASK_DESC,NVL(TASK_REMOTE,'') TASK_REMOTE,
+		NVL(TASK_ADDRESS,'') TASK_ADDRESS,NVL(TASK_PARAMETER,'') TASK_PARAMETER,TASK_BRANCH,TEMPID
+		 FROM DISPATCH_TASKETL_TASKNAME 
+		 WHERE ID=#{id}
+	</select>	
+	
+	<select id="taskGetOutputPara" resultType="String" parameterType="String">
+		SELECT OUTPARA FROM DISPATCH_TASKETL_TASKPARAS WHERE TASKNAME=#{VALUE}
+	</select>
+	
+	<select id="selectTaskMsg"  resultMap="EtlTaskMsgModel"
+		parameterType="com.sunyard.dispatch.model.form.EtlDisPatchForm">
+		SELECT TASKNAME.ID,TASKNAME.TASK_NAME,NVL(TASKNAME.JOIN_NUM,0) JOIN_NUM,TASKNAME.TASK_CN_NAME, 'false' ISSUBFLOW ,TASKNAME.TASK_BELONG TASKTYPE,<!-- BELONG.BELONG_NAME TASKTYPE, -->TASKNAME.TASK_DESC,TASKNAME.TASK_REMOTE,
+		TASKNAME.TASK_ADDRESS,TASKNAME.TASK_PARAMETER,TASKNAME.ERROR_NUM,CASE TASKNAME.TASK_ERROR WHEN '0' THEN '否' WHEN '1' THEN '是' END TASK_ERROR ,
+		CASE TASKNAME.TASK_ACTIVE WHEN '0' THEN '否' WHEN '1' THEN '是' END TASK_ACTIVE ,TASKNAME.TASK_CUSTOM,TASKNAME.TASK_LOOP,
+		TASKNAME.TASK_BRANCH
+		 FROM DISPATCH_TASKETL_TASKNAME TASKNAME <!-- INNER JOIN DISPATCH_TASKETL_TASKBELONG BELONG ON TASKNAME.TASK_BELONG= BELONG.ID -->
+		 WHERE TASKNAME.ID=#{id}
+	</select>	
+	
+</mapper>

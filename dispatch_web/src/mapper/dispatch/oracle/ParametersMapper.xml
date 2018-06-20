@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.ParametersDao">
+
+	<resultMap type="com.sunyard.dispatch.model.ParametersModel" id="parameters">
+		<id property="para_id" column="PARA_ID" />
+		<result property="para_name" column="PARA_NAME" />
+		<result property="para_comment" column="PARA_COMMENT" />
+		<result property="para_type" column="PARA_TYPE" />
+		<result property="para_value" column="PARA_VALUE" />
+		<result property="static_para" column="STATIC_PARA" />
+		<result property="create_by" column="CREATE_BY" />
+		<result property="create_date" column="CREATE_DATE" />
+		<result property="update_by" column="UPDATE_BY" />
+		<result property="update_date" column="UPDATE_DATE" />
+	</resultMap>
+
+	<select id="getParametersList" parameterType="com.sunyard.dispatch.model.form.ParametersForm"
+		resultType="com.sunyard.dispatch.model.ParametersModel">
+		select * from (SELECT rownum as rm, t.* FROM DISPATCH_TASKETL_PARAMETERS t WHERE 1=1
+		<if test=" null!=para_name and ''!=para_name ">
+			AND (t.PARA_NAME LIKE '%${para_name}%' OR t.PARA_COMMENT LIKE '%${para_name}%')
+		</if> and &lt; ${end}) t1 where t1.rm &gt; ${start}
+	</select>
+	
+	<!-- 这个是用于加载用户自定义常用变量的   -->
+	<select id="getCustomParametersByType" parameterType="com.sunyard.dispatch.model.ParametersCustomModel"
+		resultType="com.sunyard.dispatch.model.ParametersCustomModel">
+		SELECT * FROM DISPATCH_TASKETL_PARAMETERS_CU WHERE CUSTOM_PARA_TYPE= #{custom_para_type}
+	</select>
+	<!-- 1、这个是用于搜索是否已存在指定的用户自定义变量的-->
+	<select id="checkCustomParameters"  parameterType="com.sunyard.dispatch.model.ParametersCustomModel"
+		resultType="Integer">
+		SELECT COUNT(*) FROM DISPATCH_TASKETL_PARAMETERS_CU WHERE CUSTOM_PARA_TYPE= #{custom_para_type}
+		AND CUSTOM_PARA_NAME = #{custom_para_name}
+	</select>
+	
+	<!-- 2、这个是在同类型、同名变量存在的情况下用来修改此变量的 -->
+	<update id="editCustomParameters" parameterType="com.sunyard.dispatch.model.ParametersCustomModel">
+		UPDATE DISPATCH_TASKETL_PARAMETERS_CU
+	    SET
+	    CUSTOM_PARA_VALUE= #{custom_para_value}
+	    WHERE CUSTOM_PARA_TYPE= #{custom_para_type}
+		AND CUSTOM_PARA_NAME =#{custom_para_name}
+	</update>
+	
+	<!-- 3、这个是在不存在同类型、同名变量的情况下才能新增的-->
+	<insert id="insertCustomParameters" parameterType="com.sunyard.dispatch.model.ParametersCustomModel">
+		INSERT INTO DISPATCH_TASKETL_PARAMETERS_CU(custom_para_id,CUSTOM_PARA_TYPE,CUSTOM_PARA_NAME,
+		CUSTOM_PARA_VALUE,DELETABLE)
+		VALUES (
+		DISPATCH_TASKETL_PARAMETERS_PA.nextval,
+		#{custom_para_type},
+		#{custom_para_name},
+		#{custom_para_value},
+		1)
+	</insert>
+	
+	<!-- 0、如果确实存在且要删除自定义变量，进行删除-->
+	<delete id="deleteCustomParameters"  parameterType="com.sunyard.dispatch.model.ParametersCustomModel">
+		DELETE FROM DISPATCH_TASKETL_PARAMETERS_CU WHERE 
+		CUSTOM_PARA_TYPE= #{custom_para_type}
+		AND CUSTOM_PARA_NAME =#{custom_para_name}
+	</delete>
+	
+	<select id="getParametersListCount" parameterType="com.sunyard.dispatch.model.form.ParametersForm" 
+		resultType="Integer">
+	SELECT COUNT(1) FROM DISPATCH_TASKETL_PARAMETERS WHERE 1=1
+		<if test=" null!=para_name and ''!=para_name ">
+			AND (PARA_NAME LIKE '%${para_name}%' OR PARA_COMMENT LIKE '%${para_name}%')
+		</if>
+	</select>
+	
+	<!-- 下面的语句用于查找是否有（id不同而）name重复的参数 -->
+	<select id="getParametersNameCount" parameterType="com.sunyard.dispatch.model.form.ParametersForm" 
+		resultType="Integer">
+	SELECT COUNT(1) FROM DISPATCH_TASKETL_PARAMETERS WHERE PARA_NAME=#{para_name}
+		<if test=" null!=para_id and ''!=para_id ">
+			AND (PARA_ID != #{para_id})
+		</if>
+	</select>
+	
+	<delete id="parametersDel"  parameterType="java.lang.Integer">
+		DELETE FROM DISPATCH_TASKETL_PARAMETERS WHERE PARA_ID=#{para_id}
+	</delete>
+	
+	<insert id="parametersAdd" parameterType="com.sunyard.dispatch.model.form.ParametersForm" >
+		<!-- <selectKey resultType="Integer" order="BEFORE" keyProperty="id">插入后，返回当前记录的id
+				select  DISPATCH_REMOTE_SEQ.nextval as id from dual
+			</selectKey> -->
+		INSERT INTO DISPATCH_TASKETL_PARAMETERS(para_id,PARA_NAME,PARA_COMMENT,PARA_TYPE,PARA_VALUE,
+		STATIC_PARA,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE) VALUES
+		(<!-- #{id}, -->
+		DISPATCH_TASKETL_PARAMETERS__2.nextval,
+		#{para_name},
+		#{para_comment},
+		#{para_type},
+		#{para_value},
+		#{static_para},
+		#{create_by},
+		(select sysdate()),
+		#{create_by},
+		(select sysdate())
+		)
+	</insert>
+	
+	<update id="parametersEdit" parameterType="com.sunyard.dispatch.model.form.ParametersForm">
+		UPDATE DISPATCH_TASKETL_PARAMETERS SET 
+		<if test=" null!=para_name and ''!=para_name">
+			PARA_NAME = #{para_name},
+		</if>
+		<if test=" null!=para_comment and ''!=para_comment">
+			PARA_COMMENT = #{para_comment},
+		</if>
+		<if test=" null!=para_type and ''!=para_type ">
+			PARA_TYPE = #{para_type},
+		</if>
+		<if test=" null!=para_value and ''!=para_value ">
+			PARA_VALUE = #{para_value},
+		</if>
+		<if test=" null!=static_para and ''!=static_para ">
+			STATIC_PARA = #{static_para},
+		</if>
+		<if test=" null!=update_by and ''!=update_by ">
+			UPDATE_BY = #{update_by},
+		</if>
+		UPDATE_DATE = sysdate   WHERE PARA_ID = #{para_id} 
+	</update>
+	
+	<!--2016年6月17日-->
+	<select id="getUpdatedPara" parameterType="com.sunyard.dispatch.model.form.ParametersForm"
+		resultType="com.sunyard.dispatch.model.ParametersModel">
+		SELECT * FROM DISPATCH_TASKETL_PARAMETERS WHERE
+		PARA_ID=#{para_id}
+	</select>
+
+	<update id="updateTaskPara" parameterType="com.sunyard.dispatch.model.ParametersModel">
+		UPDATE DISPATCH_TASKETL_TASKPARAS SET PARANAME=#{para_name},PARAVALUE=#{para_value}
+		WHERE PARAID=#{para_id} AND OVERALL="是"
+	</update>
+</mapper>

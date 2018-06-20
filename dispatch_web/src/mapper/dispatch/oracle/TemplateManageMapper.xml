@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.TemplateManageDao">
+
+	<resultMap type="com.sunyard.dispatch.model.TemplateManageModel" id="template">
+		<id property="id" column="ID" />
+		<result property="templateName" column="TEMPLATE_NAME" />
+		<result property="templateDesc" column="TEMPLATE_DESC" />
+		<result property="templateRemote" column="TEMPLATE_REMOTE" />
+		<result property="templateCommand" column="TEMPLATE_COMMAND" />
+		<result property="templateParameter" column="TEMPLATE_PARAMETER" />
+		<result property="errorNum" column="ERROR_NUM" />
+		<result property="templateError" column="TEMPLATE_ERROR" />
+		<result property="templateActive" column="TEMPLATE_ACTIVE" />
+		<result property="templateCustom" column="TEMPLATE_CUSTOM" />
+		<result property="templateBranch" column="TEMPLATE_BRANCH" />
+		<result property="templateLoop" column="TEMPLATE_LOOP" />
+		<result property="paramsVal" column="PARAMS_VAL" />
+	</resultMap>
+
+	<select id="getTemplateManagePage" parameterType="com.sunyard.dispatch.model.form.TemplateManageForm"
+		resultMap="template">
+		select * from (SELECT rownum as rm, t.* FROM DISPATCH_TASKETL_TEMPLATE t WHERE 1=1 
+		<if test=" null!=templateName and ''!=templateName ">
+			AND t.TEMPLATE_NAME LIKE '%${templateName}%'
+		</if> and rownum &lt; ${end}) t1 where t1.rm &gt; ${start}
+	</select>
+	
+	<select id="getTemplateManageListCount" parameterType="com.sunyard.dispatch.model.form.TemplateManageForm"
+		resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_TEMPLATE WHERE 1=1 
+		<if test=" null!=templateName and ''!=templateName ">
+			AND TEMPLATE_NAME LIKE '%${templateName}%'
+		</if>
+	</select>
+	
+	<select id="getTemplateList" resultMap="template">
+		SELECT ID,TEMPLATE_NAME,PARAMS_VAL FROM DISPATCH_TASKETL_TEMPLATE
+	</select>
+	
+	<select id="findTemplateById" parameterType="String" resultMap="template">
+		SELECT * FROM DISPATCH_TASKETL_TEMPLATE WHERE ID = #{id}
+	</select>
+	
+	<select id ="getID">
+		CALL getID('DISPATCH_TASKETL_TEMPLATE_SEQ');
+	</select>
+	
+	<select  id="getTemplateId" resultType="String">
+		SELECT CURRENT_VAL FROM DISPATCH_TASKETL_TEMPLATE_SEQ;
+	</select>
+	
+	<insert id="templateAdd" parameterType="com.sunyard.dispatch.model.form.TemplateManageForm">
+		INSERT INTO DISPATCH_TASKETL_TEMPLATE(ID,TEMPLATE_NAME,TEMPLATE_DESC,TEMPLATE_REMOTE,TEMPLATE_COMMAND,TEMPLATE_PARAMETER,ERROR_NUM,TEMPLATE_ERROR,TEMPLATE_ACTIVE,TEMPLATE_CUSTOM,TEMPLATE_BRANCH,TEMPLATE_LOOP,PARAMS_VAL) VALUES(
+			#{id},
+			#{templateName},
+			#{templateDesc},
+			#{templateRemote},
+			#{templateCommand},
+			#{templateParameter},
+			#{errorNum},
+			#{templateError},
+			#{templateActive},
+			#{templateCustom},
+			#{templateBranch},
+			#{templateLoop},
+			#{paramsVal}
+		)
+	</insert>
+	
+	<update id="templateEdit" parameterType="com.sunyard.dispatch.model.form.TemplateManageForm">
+		UPDATE DISPATCH_TASKETL_TEMPLATE SET 
+		<if test=" null!=templateName ">
+			TEMPLATE_NAME = #{templateName},
+		</if>
+		<if test=" null!=templateDesc ">
+			TEMPLATE_DESC = #{templateDesc},
+		</if>
+		<if test=" null!=templateRemote ">
+			TEMPLATE_REMOTE = #{templateRemote},
+		</if>
+		<if test=" null!=templateCommand ">
+			TEMPLATE_COMMAND = #{templateCommand},
+		</if>
+		<if test=" null!=templateParameter ">
+			TEMPLATE_PARAMETER = #{templateParameter},
+		</if>
+		<if test=" null!=errorNum ">
+			ERROR_NUM = #{errorNum},
+		</if>
+		<if test=" null!=templateError ">
+			TEMPLATE_ERROR = #{templateError},
+		</if>
+		<if test=" null!=templateActive ">
+			TEMPLATE_ACTIVE = #{templateActive},
+		</if>
+		<if test=" null!=templateCustom ">
+			TEMPLATE_CUSTOM = #{templateCustom},
+		</if>
+		<if test=" null!=templateBranch ">
+			TEMPLATE_BRANCH = #{templateBranch},
+		</if>
+		<if test=" null!=templateLoop ">
+			TEMPLATE_LOOP = #{templateLoop},
+		</if>
+		<if test=" null!=paramsVal ">
+			PARAMS_VAL = #{paramsVal}
+		</if>
+		 WHERE ID = #{id} 
+	</update>
+	
+	<!-- <delete id="templateDel" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_TEMPLATE WHERE ID=#{id}
+	</delete> -->
+	
+	<delete id="templateDelByIds" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_TEMPLATE WHERE ID IN (${ids})
+	</delete>
+		
+</mapper>

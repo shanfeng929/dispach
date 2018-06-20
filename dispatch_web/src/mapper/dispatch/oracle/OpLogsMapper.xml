@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.OpLogsDao">
+
+	<resultMap type="com.sunyard.dispatch.model.OpLog" id="opLog">
+		<id property="id" column="ID" />
+		<result property="operator" column="OPERATOR"  jdbcType="VARCHAR" />
+		<result property="address" column="ADDRESS"  jdbcType="VARCHAR" />
+		<result property="operation" column="OPERATION"  jdbcType="VARCHAR" />
+		<result property="description" column="DESCRIPTION"  jdbcType="VARCHAR" />
+		<result property="level" column="LOG_LEVEL"  jdbcType="VARCHAR" />
+		<result property="createBy" column="CREATE_BY"  jdbcType="VARCHAR" />
+		<result property="createTime" column="CREATE_TIME"  jdbcType="VARCHAR"/>
+		<result property="costTime" column="cost_time"  jdbcType="VARCHAR" />
+		<result property="serverIp" column="server_ip"  jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getOpLogList" parameterType="com.sunyard.dispatch.model.form.OpLogForm" resultMap="opLog">
+		select * from (select r.*,rownum as rm from (
+			select t.* from DISPATCH_TASKETL_OPLOGS t where 1=1
+			<if test=" null!=operator and ''!=operator ">
+				AND t.operator LIKE '%${operator}%'
+			</if>
+			<if test=" null!=level and ''!=level ">
+				AND t.LOG_LEVEL LIKE '%${level}%'
+			</if>
+			<if test=" null!=dateStart and ''!=dateStart ">
+				AND t.create_time &gt; '${dateStart}'
+			</if>
+			<if test=" null!=dateEnd and ''!=dateEnd ">
+				AND t.create_time &lt; '${dateEnd} 24'
+			</if>
+			order by create_time desc
+		) r where rownum  &lt; ${end}) where rm  &gt; ${start}
+	</select>
+	
+	<select id="getOpLogCount" parameterType="com.sunyard.dispatch.model.form.OpLogForm"
+		resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_OPLOGS WHERE 1=1
+		<if test=" null!=operator and ''!=operator ">
+			AND operator LIKE '%${operator}%'
+			</if>
+		<if test=" null!=level and ''!=level ">
+			AND LOG_LEVEL LIKE '%${level}%'
+		</if>
+		<if test=" null!=dateStart and ''!=dateStart ">
+			AND create_time &gt; '${dateStart}'
+		</if>
+		<if test=" null!=dateEnd and ''!=dateEnd ">
+			AND create_time &lt; '${dateEnd} 24'
+		</if>
+	</select>
+	
+	<insert id="addLogger" parameterType="com.sunyard.dispatch.model.form.OpLogForm">
+		INSERT INTO DISPATCH_TASKETL_OPLOGS(ID,OPERATOR,ADDRESS,OPERATION,DESCRIPTION,LOG_LEVEL,cost_time,server_ip,CREATE_BY,CREATE_TIME) VALUES
+		(<!-- #{id}, -->
+		DISPATCH_TASKETL_OPLOGS_ID_SEQ.nextval,
+		#{operator,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},
+		#{operation,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{level,jdbcType=LONGVARCHAR},
+		#{costTime,jdbcType=LONGVARCHAR},
+		#{serverIp,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},
+		to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')
+		)
+	</insert>
+		
+	<select id="getAllOpLogs" parameterType="com.sunyard.dispatch.model.form.OpLogForm" resultMap="opLog">
+		select r.* from (
+			select t.* from DISPATCH_TASKETL_OPLOGS t where 1=1
+			<if test=" null!=operator and ''!=operator ">
+				AND t.operator LIKE '%${operator}%'
+			</if>
+			<if test=" null!=level and ''!=level ">
+				AND t.LOG_LEVEL LIKE '%${level}%'
+			</if>
+			<if test=" null!=dateStart and ''!=dateStart ">
+				AND t.create_time &gt; '${dateStart}'
+			</if>
+			<if test=" null!=dateEnd and ''!=dateEnd ">
+				AND t.create_time &lt; '${dateEnd} 24'
+			</if>
+			order by create_time desc
+		) r where rownum  &lt; 10000
+	</select>
+</mapper>

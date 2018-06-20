@@ -1,0 +1,48 @@
+{
+    "expanded":true,
+      "children":[
+        {"code":"a1","text":"一般信贷业务","leaf":true,"url":"ALM.controller.rwa.datas.ManualRecordController",
+          "view":"ALM.view.rwa.datas.manualRecord.generalCredit.ManualRecordListView","children":""},
+          
+        {"code":"a2","text":"产品树补录","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.ProductConfigureController",
+          "view":"ALM.view.rwa.datas.manualRecord.productConfigure.ProductConfigureListView","children":""},
+          
+        {"code":"a3","text":"曲线利率","leaf":true,"url":"ALM.controller.rwa.datas.RateCurveController",
+          "view":"ALM.view.rwa.datas.manualRecord.rateCurve.RateCurveListView","children":""},
+          
+           {"code":"a4","text":"存款准备金参数","leaf":true,"url":"ALM.controller.rwa.datas.InterestRatesController",
+          "view":"ALM.view.rwa.datas.manualRecord.interestRates.InterestRatesListView","children":""},
+          
+        {"code":"a8","text":"一般信贷业务","expanded":true,"children":[
+	       {"code":"a82","text":"买断资产","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.BuyoutAssetSupplController",
+	         "view":"ALM.view.rwa.datas.manualRecord.buyoutAssetSuppl.BuyoutAssetSupplListView","children":""},
+	       {"code":"a83","text":"发行保本理财","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.CapitalGuaranteeFinaclingSupplController",
+	         "view":"ALM.view.rwa.datas.manualRecord.capitalGuaranteeFinaclingSuppl.CapitalGuaranteeFinaclingSupplListView","children":""},
+	       {"code":"a81","text":"买返资产","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.RepurchaseAssetSupplController",
+	         "view":"ALM.view.rwa.datas.manualRecord.repurchaseAssetSuppl.RepurchaseAssetSupplListView","children":""},
+	       {"code":"a84","text":"买返债券","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.RepurchaseAssetBondController",
+	         "view":"ALM.view.rwa.datas.manualRecord.repurchaseAssetBond.RepurchaseAssetBondListView","children":""}
+        ]},
+          
+        {"code":"a5","text":"回购","expanded":true,"children":[
+          {"code":"a51","text":"买入返售买断式债券(outer)","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.OutrightBondSupplController",
+            "view":"ALM.view.rwa.datas.manualRecord.outrightBondSuppl.OutrightBondSupplListView","children":""},
+          {"code":"a52","text":"买入返售买断式债券(pledge)","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.PledgeBondSupplController",
+            "view":"ALM.view.rwa.datas.manualRecord.pledgeBondSuppl.PledgeBondSupplListView","children":""}
+        ]},
+        {"code":"a5","text":"债权头寸","expanded":true,"children":[
+          {"code":"a51","text":"利率交易头寸","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.InteresetDealSupplController",
+            "view":"ALM.view.rwa.datas.manualRecord.interesetDealSuppl.InteresetDealSupplListView","children":""},
+          {"code":"a51","text":"交易头寸1","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.InvestmentDetailSupplController",
+            "view":"ALM.view.rwa.datas.manualRecord.investmentDetailSuppl.InvestmentDetailSupplListView","children":""},
+          {"code":"a51","text":"交易头寸2","leaf":true,"url":"ALM.controller.rwa.datas.manualRecord.InvestmentHeaderSupplController",
+            "view":"ALM.view.rwa.datas.manualRecord.investmentHeaderSuppl.InvestmentHeaderSupplListView","children":""},
+          {"code":"a52","text":"利率交易头寸","leaf":true,"children":""}
+        ]},
+        {"code":"a6","text":"ABS资产证券化担保明细","leaf":true,"children":"","url":"ALM.controller.rwa.datas.manualRecord.ABSBoudDetailSupplTagController",
+        "view":"ALM.view.rwa.datas.manualRecord.absBoudDetailSupplTag.ABSBoudDetailSupplTagListView"},
+        {"code":"a6","text":"ABS资产证券化","leaf":true,"children":"","url":"ALM.controller.rwa.datas.manualRecord.ABSBoudSupplTagController",
+          "view":"ALM.view.rwa.datas.manualRecord.absBoudSupplTag.ABSBoudSupplTagListView"},
+        {"code":"a6","text":"其他业务","leaf":true,"children":""}
+      ]
+}

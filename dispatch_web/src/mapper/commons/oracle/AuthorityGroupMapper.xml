@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.sunyard.dispatch.common.dao.AuthorityGroupDao">
+	<resultMap type="com.sunyard.dispatch.common.model.Authority" id="Authority"  >
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_updated" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	<resultMap type="com.sunyard.dispatch.common.model.AuthorityGroup" id="AuthorityGroup">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="text" />
+		<result property="description" column="des" />
+		<result property="parentId" column="parent_id" />
+	</resultMap>
+	
+	<select id="selectRootAuthorityGroup" resultType="java.util.Map">
+		select 
+      		id id, 
+      		name text, 
+     		code code, 
+			description des,
+			parent_id parent_id,
+			data_status dataStatus
+		from sys_authority_group_tb sagt
+  		where data_status = 0 and parent_id is null
+	</select>
+	<select id="selectChildrenByGroupId" parameterType="java.lang.Integer" resultType="java.util.Map">
+		 select
+			id id,
+			name text,
+			code code,
+			description des,
+			parent_id parent_id,
+			data_status dataStatus
+  		from sys_authority_group_tb sagt
+  		where data_status = 0 and parent_id = #{groupId}
+	</select>
+
+	<select id="queryAuthority" resultMap="Authority">
+		select
+			sat.id,
+			sat.name
+		from sys_authority_tb sat
+	</select>
+
+	<select id="querySelectAuthority" parameterType="java.lang.Integer" resultMap="Authority">
+		select
+		sat.id id,
+		sat.name name
+		from sys_map_auth_authgroup_tb smaat
+		left join sys_authority_tb sat on sat.id=smaat.auth_id
+		where smaat.authgroup_id=#{id}
+	</select>
+
+	<select id="repeatedAuthority" parameterType="com.sunyard.dispatch.common.model.form.AuthorityGroupForm"  resultType="java.lang.Integer">
+		select count(id) from sys_authority_group_tb where name=#{name}
+	</select>
+	<select id="selectNameById" parameterType="java.lang.Integer" resultType="java.lang.String">
+		select name from sys_authority_group_tb where id=#{id}
+	</select>
+	<update id="updateAuthorityGroup" parameterType="com.sunyard.dispatch.common.model.form.AuthorityGroupForm">
+		update sys_authority_group_tb set
+		name=#{name,jdbcType=VARCHAR},
+		code=#{code,jdbcType=VARCHAR},
+		description=#{description,jdbcType=VARCHAR},
+		parent_id=#{parentId,jdbcType=INTEGER},
+		date_modified=CURRENT_TIMESTAMP
+		where id=#{id,jdbcType=INTEGER}
+	</update>
+	<update id="deleteAuthAuthGroup" parameterType="java.lang.Integer">
+		delete from sys_map_auth_authgroup_tb where authgroup_id=#{id}
+	</update>
+	<insert id="insertAuthAuthGroup" parameterType="com.sunyard.dispatch.common.model.AuthAuthGroup">
+		insert into sys_map_auth_authgroup_tb(auth_id,authgroup_id )
+		<foreach item="item" index="" collection="list" separator=" union all " >
+			select #{item.authId} auth_id,#{item.authGroupId} authgroup_id from sysibm.dual
+		</foreach>
+	</insert>
+
+	<insert id="insertAuthGroup"  parameterType="com.sunyard.dispatch.common.model.form.AuthorityGroupForm">
+		<selectKey resultType="Integer" order="BEFORE" keyProperty="id">
+			select sys_authority_group_seq.nextval as id from dual
+		</selectKey>
+		insert into sys_authority_group_tb(id,name,code,description,parent_id,data_status,date_created) values
+    	(#{id,jdbcType=INTEGER},
+    	#{name,jdbcType=VARCHAR},
+    	#{code,jdbcType=VARCHAR},
+   	    #{description,jdbcType=VARCHAR},
+		#{parentId,jdbcType=INTEGER},
+		#{dataStatus,jdbcType=INTEGER},
+   		CURRENT_TIMESTAMP)
+	</insert>
+
+
+	<delete id="deleteAuthorityGroup"  parameterType="java.lang.Integer">
+		<!-- update sys_authority_group_tb set data_status=4,date_modified=CURRENT_TIMESTAMP where id=#{id} -->
+		delete from sys_authority_group_tb where id=#{id}
+	</delete>
+
+	<delete id="deleteAuthorityGroups"  parameterType="java.lang.Integer">
+		delete from sys_map_auth_authgroup_tb where authgroup_id=#{id}
+	</delete>
+</mapper>

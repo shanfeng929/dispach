@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.EtlFlowDisPatchDao">
+	
+	<resultMap type="com.sunyard.dispatch.model.EtlFlowDisPatchModel"
+		id="EtlFlowDisPatchModel">
+		<result column="ID" property="id"/>
+		<result column="FLOW_GROUP_NAME" property="flowGroupName"/>
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.model.EtlFlowDisPatchModel"
+		id="EtlflowMessageModel">
+		<result column="ID" property="id"/>	
+		<result column="FLOW_NAME" property="flowName"/>
+		<!-- <result column="FLOW_CN_NAME" property="flowCnName"/> -->
+		<result column="JOIN_NUM" property="joinNum"/>
+		<result column="ISSUBFLOW" property="isSubflow"/>
+		<result column="FLOW_DESC" property="flowDesc"/>
+	</resultMap>
+	
+	
+	<select id="SelectFlowGroup" resultMap="EtlFlowDisPatchModel"
+		parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+			SELECT ID,FLOW_GROUP_NAME FROM DISPATCH_TASKETL_FLOWGROUP	
+	</select>
+	
+	<select id="selectFlowMessage" resultMap="EtlflowMessageModel"
+		parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		
+		SELECT FLOWNAME.ID,FLOWNAME.FLOW_NAME,IFNULL(FLOWNAME.JOIN_NUM,0) JOIN_NUM,<!-- FLOW_CN_NAME, -->FLOW_DESC, 'true' ISSUBFLOW FROM DISPATCH_TASKETL_FLOWNAME FLOWNAME INNER JOIN 
+	DISPATCH_TASKETL_TASKBELONG BELONG ON FLOWNAME.FLOW_TYPE=BELONG.ID
+	WHERE BELONG_NAME='子流程' AND FLOWNAME.ID=#{id}
+	
+	</select>
+	
+	
+	<select id="getPid" resultMap="EtlflowMessageModel"
+		parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		
+	SELECT ID FROM DISPATCH_TASKETL_FLOWNAME
+	WHERE PID IN (SELECT ID FROM DISPATCH_TASKETL_FLOWNAME WHERE ID NOT IN (${id}) AND PID IN( ${pid}))
+	
+	</select>
+	
+	
+	
+	<select id ="getID">
+CALL getID('DISPATCH_TASKETL_FLOWNAME_SEQ');
+	</select>
+
+	<select  id="maxFlowId" resultType="String">
+SELECT CURRENT_VAL FROM DISPATCH_TASKETL_FLOWNAME_SEQ;
+	</select>
+
+	<select id="checkFlowIdInXml" resultType="String">
+SELECT 'true' FROM DISPATCH_TASKETL_XML WHERE FLOW_ID=#{flowId}
+	</select>
+
+	<insert id="insert"
+		parameterType="com.sunyard.dispatch.model.form.EtlFlowDisPatchForm">
+		INSERT INTO DISPATCH_TASKETL_FLOWNAME(ID,FLOW_NAME,<!-- FLOW_CN_NAME, -->
+		START_TIME,FLOW_GROUPID,WORK_DATE,CREATOR,FLOW_DESC,FLOW_BRANCH,
+		CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE,FLOW_TYPE,<!-- NEXT_STARTTIME, -->NEXT_STARTUNIT,FLOW_STATUS
+		)
+		VALUES
+		(#{id},#{flowName},<!-- #{flowCnName}, --> DATE_FORMAT(#{startTime},'%T'),#{flowGroup},DATE_FORMAT(#{workDate},'%Y-%m-%d'),
+		#{creator},#{flowDesc},#{branch},#{createBy	},(SELECT SYSDATE() ),
+		#{updateBy},(SELECT SYSDATE()),'4',<!-- ${nextStart}, -->#{nextStartUnit},0
+		)	
+
+	</insert>
+	<!-- 下方的语句：寻找同一组里是否有重名的 -->
+	<select id="findSameName"  parameterType="com.sunyard.dispatch.model.form.EtlFlowDisPatchForm" resultType="Integer" >
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_FLOWNAME WHERE FLOW_NAME=#{flowName} AND FLOW_GROUPID=#{flowGroup}
+		<if test=" null!=id and ''!=id ">
+			AND (ID != #{id})
+		</if>
+	</select>
+	<!-- 由于同一数据库模型对应两套不同的Form,且两个Form不互相继承，所以只好写两遍了-->
+	<select id="findSameName_EDIT"  parameterType="com.sunyard.dispatch.model.form.FlowManageForm" resultType="Integer" >
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_FLOWNAME WHERE FLOW_NAME=#{flowName} AND FLOW_GROUPID=#{flowGroupid}
+		<if test=" null!=id and ''!=id ">
+			AND (ID != #{id})
+		</if>
+	</select>
+
+	<select id="ExecSql" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		${SQL}
+	</select>
+
+	<update id="UpdateTaskName" parameterType="java.lang.String" >
+		UPDATE DISPATCH_TASKETL_TASKNAME SET CREATE_BY=#{username},UPDATED_BY=#{username},
+		CREATE_DATE=(SELECT NOW()),UPDATED_DATE=(SELECT NOW()) WHERE PID=#{flowId};
+	</update>
+	<update id="UpdateDependency" parameterType="java.lang.String" >
+		UPDATE DISPATCH_TASKETL_TSDEPENDENCY SET  CREATE_BY=#{username},UPDATED_BY=#{username},
+		CREATE_DATE=(SELECT NOW()),UPDATED_DATE=(SELECT NOW()) WHERE FLOW_ID=#{flowId};
+	</update>
+
+	<insert id="insertXml" parameterType="java.lang.String">
+		INSERT INTO DISPATCH_TASKETL_XML(FLOW_ID,XML,LOAD_DATA,CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE)
+		VALUE(#{flowId},#{xml},#{loadData},#{username},(SELECT NOW()),#{username},(SELECT NOW()));
+	</insert>
+
+	<update id="updateXml" parameterType="java.lang.String">
+		UPDATE DISPATCH_TASKETL_XML SET XML=#{xml},LOAD_DATA=#{loadData},
+		CREATE_BY=#{username},CREATE_DATE=(SELECT NOW()),UPDATED_BY=#{username},
+		UPDATED_DATE=(SELECT NOW()) WHERE FLOW_ID=#{flowId};
+	</update>
+
+	<select id="SelectLoadData"  parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel" resultType="String">
+		SELECT LOAD_DATA FROM DISPATCH_TASKETL_XML
+		WHERE FLOW_ID=#{flowId};
+	</select>
+
+
+	<select  id="lastFlowId"  parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel" resultType="String">
+		SELECT CASE WHEN FLOW_TYPE=4 THEN  'iframe_draw' 
+		WHEN FLOW_TYPE=3 THEN  ID  END   FROM DISPATCH_TASKETL_FLOWNAME WHERE ID =(
+		SELECT TEMPID FROM DISPATCH_TASKETL_FLOWNAME
+		WHERE ID=#{id})
+	</select>
+
+	<insert id="insertInIt"
+		parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		INSERT INTO DISPATCH_TASKETL_FLOWNAME(ID,FLOW_NAME
+		,CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE,
+		  FLOW_BRANCH,FLOW_TYPE,TEMPID
+		)
+		VALUES
+		(CONCAT('flow',#{id}),'子流程',
+		#{createBy},(SELECT SYSDATE() ),
+		#{updateBy},(SELECT SYSDATE()),1,3,#{tempId}
+		)
+	</insert>
+
+	<update id="updateInIt"
+		parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		UPDATE DISPATCH_TASKETL_FLOWNAME SET FLOW_NAME=#{flowName},
+		<!-- FLOW_CN_NAME=#{flowCnName}, -->FLOW_DESC=#{flowDesc},JOIN_NUM=#{joinNum},UPDATED_BY=#{updateBy},
+		UPDATED_DATE=(SELECT NOW()) WHERE ID=#{id};
+	</update>
+
+	<insert id="insertPrev"
+		parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		INSERT INTO DISPATCH_TASKETL_TSDEPENDENCY(TASK_ID,TASK_TYPE,
+		CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE) VALUES
+		(CONCAT('flow',#{id}),'0',#{createBy},(SELECT SYSDATE() ),
+		#{updateBy},(SELECT SYSDATE()))
+	</insert>
+	
+	<select id="checkFlowId"  resultType="String" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		SELECT 'true' FROM DISPATCH_TASKETL_FLOWNAME WHERE ID=#{id}
+	</select>	
+	
+	<delete id="deleteTempId" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_FLOWNAME WHERE TEMPID=#{tempId} and PID is NULL;
+	</delete>
+	
+	<delete  id="subFlowDel" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_FLOWNAME
+		WHERE ID NOT IN (${id})  AND PID=#{pid}
+	</delete>	
+
+	<delete id="subFlowtaskDel" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_TASKNAME
+		WHERE PID IN (SELECT ID FROM DISPATCH_TASKETL_FLOWNAME WHERE ID NOT IN (${id}) AND PID=#{pid})
+	</delete>	
+
+	<delete id="subFlowdependDel" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_TSDEPENDENCY
+		WHERE FLOW_ID IN (SELECT ID FROM DISPATCH_TASKETL_FLOWNAME WHERE ID NOT IN (${id}) AND PID=#{pid})
+	</delete>	
+
+	<delete id="subFlowxmlDel" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_XML
+		WHERE FLOW_ID IN  (SELECT ID FROM DISPATCH_TASKETL_FLOWNAME WHERE ID NOT IN (${id}) AND PID=#{pid})
+	</delete>	
+
+	<delete  id="subFlowPidDel" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_FLOWNAME
+		WHERE ID IN (${id})  
+	</delete>	
+
+	<delete id="subFlowPidtaskDel" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_TASKNAME
+		WHERE PID IN (SELECT ID FROM DISPATCH_TASKETL_FLOWNAME WHERE ID IN (${id}) )
+	</delete>	
+
+	<delete id="subFlowPiddependDel" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_TSDEPENDENCY
+		WHERE FLOW_ID IN (SELECT ID FROM DISPATCH_TASKETL_FLOWNAME WHERE ID IN (${id}) )
+	</delete>	
+
+	<delete id="subFlowPidxmlDel" parameterType="com.sunyard.dispatch.model.EtlFlowDisPatchModel">
+		DELETE FROM DISPATCH_TASKETL_XML
+		WHERE FLOW_ID IN  (SELECT ID FROM DISPATCH_TASKETL_FLOWNAME WHERE ID IN (${id}) )
+	</delete>	
+
+</mapper>

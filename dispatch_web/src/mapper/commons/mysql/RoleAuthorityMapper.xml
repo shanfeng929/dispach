@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.RoleAuthDao">
+
+	<resultMap type="com.sunyard.dispatch.common.model.RoleAuth" id="RoleAuth">
+		<id property="roleId" column="ROLE_ID" />
+	    <id property="authId" column="AUTH_ID" /> 
+	</resultMap>
+	
+	<insert id="saveRoleAuth" parameterType="com.sunyard.dispatch.common.model.RoleAuth">
+		insert into  SYS_MAP_ROLE_AUTH_TB(ROLE_ID,AUTH_ID)values(#{roleId,jdbcType=INTEGER},#{authId,jdbcType=INTEGER})
+	</insert>
+	
+	<delete id="deleteRoleAuth">
+		delete from  SYS_MAP_ROLE_AUTH_TB where ROLE_ID=#{roleId}
+	</delete>
+	
+	<update id="updateRoleAuth" parameterType="com.sunyard.dispatch.common.model.RoleAuth">
+		update  SYS_MAP_ROLE_AUTH_TB set AUTH_ID=#{authId,jdbcType=INTEGER} where ROLE_ID=#{roleId,jdbcType=INTEGER}
+	</update>
+	
+	<select id="selectUserAuth" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select t.AUTH_ID id from  SYS_MAP_ROLE_AUTH_TB t where ROLE_ID=#{id}
+	</select>
+</mapper>	

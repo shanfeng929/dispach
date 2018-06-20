@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.AuthorityDao">
+
+	<resultMap type="com.sunyard.dispatch.common.model.Authority" id="Authority">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	
+	
+	<resultMap type="com.sunyard.dispatch.common.model.AuthorityGroup" id="AuthorityGroup">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="parentId" column="parent_id" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.common.model.AuthorityNew" id="AuthorityNew">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status" />
+		<collection property="AuthMenu" ofType="com.sunyard.dispatch.common.model.AuthMenu">
+			<result property="authId" column="auth_id" />
+			<result property="menuId" column="menu_id" />
+		</collection>
+		<collection property="AuthOperation" ofType="com.sunyard.dispatch.common.model.AuthOperation">
+			<result property="authId" column="auth_id" />
+			<result property="operationId" column="opea_id" />
+		</collection>
+		<collection property="menus"
+			ofType="com.sunyard.dispatch.common.model.MenuBean" resultMap="MenuShow"
+			columnPrefix="menu_" />
+		<collection property="opeas"
+			ofType="com.sunyard.dispatch.common.model.OperationNew" resultMap="OperationNew"
+			columnPrefix="opea_" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.common.model.MenuBean" id="MenuShow">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="url" column="url" />
+		<result property="cls" column="cls" />
+		<result property="parentId" column="parent_id" />
+		<result property="leaf" column="leaf" />
+		<result property="description" column="description" />
+		<result property="disOrder" column="dis_order" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.common.model.OperationNew" id="OperationNew">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="leaf" column="leaf" />
+		<result property="prefix" column="prefix" />
+		<result property="suffix" column="suffix" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	
+	<select id="selectAuthorityContainsOperations" resultMap="Authority">
+		select 
+			ca.id id,
+			ca.code code,
+			ca.name name,
+			ca.description description,
+			ca.creator_id creator_id,
+			ca.modifier_id modifier_id,
+			ca.date_created date_created,
+			ca.date_modified date_modified,
+			ca.data_status
+		from SYS_AUTHORITY_TB ca
+		where ca.data_status = 0
+		and exists (
+			select
+				cmao.auth_id
+			from SYS_MAP_AUTH_OPEA_TB cmao where cmao.auth_id = ca.id
+		)
+	</select>
+
+	<select id="selectRootAuthorityGroup" resultType="java.util.Map">
+		select
+			sagt.id id,
+			sagt.name text,
+			sagt.code code,
+			1 group_
+  		from SYS_AUTHORITY_GROUP_TB sagt
+		where sagt.data_status = 0 and sagt.parent_id is null
+	</select>
+
+	<select id="selectChildrenByGroupId" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select
+			sagt.id id,
+			sagt.name text,
+			sagt.code code,
+			1 group_
+  		from SYS_AUTHORITY_GROUP_TB sagt
+		where sagt.data_status = 0 and sagt.parent_id = #{groupId}
+	</select>
+
+	<select id="selectAuthorityByGroupId" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select
+			sat.id id,
+			sat.code code,
+			sat.name text,
+			0 group_
+		from SYS_AUTHORITY_TB sat
+		where
+			exists ( select smaat.auth_id from SYS_MAP_AUTH_AUTHGROUP_TB smaat where smaat.auth_id = sat.id and smaat.authgroup_id = #{groupId})
+		and sat.data_status = 0
+	</select>
+
+	<select id="queryAllAuth" resultMap="Authority">
+		select
+			ca.id id,
+			ca.code code,
+			ca.name name,
+			ca.description description,
+			ca.creator_id creator_id,
+			ca.modifier_id modifier_id,
+			ca.date_created date_created,
+			ca.date_modified date_modified,
+			ca.data_status
+		from SYS_AUTHORITY_TB ca
+	</select>
+
+	<select id="selectRootAuthority" resultType="java.util.Map">
+		select
+			sagt.id id,
+			sagt.name text,
+			sagt.code code,
+			sagt.description description
+  		from SYS_AUTHORITY_TB sagt
+		where sagt.data_status = 1
+	</select>
+
+		<insert id="insertAuth" useGeneratedKeys="true" keyProperty="id" parameterType="com.sunyard.dispatch.common.model.AuthorityNew">
+		
+    	insert into SYS_AUTHORITY_TB(CODE,NAME,DESCRIPTION,CREATOR_ID,MODIFIER_ID,DATE_CREATED,DATE_MODIFIED,DATA_STATUS)
+    	values(#{code, jdbcType=VARCHAR},#{name, jdbcType=VARCHAR},#{description, jdbcType=VARCHAR},#{creator,jdbcType=NUMERIC},#{modifier,jdbcType=NUMERIC},#{dateCreated, jdbcType=TIMESTAMP},#{dateUpdated, jdbcType=TIMESTAMP},#{dataStatus,jdbcType=NUMERIC})
+	</insert>
+
+	<update id="updateAuth" parameterType="com.sunyard.dispatch.common.model.AuthorityNew">
+		update SYS_AUTHORITY_TB set CODE=#{code, jdbcType=VARCHAR},NAME=#{name, jdbcType=VARCHAR},DESCRIPTION=#{description, jdbcType=VARCHAR},CREATOR_ID=#{creator,jdbcType=NUMERIC},
+		MODIFIER_ID=#{modifier,jdbcType=NUMERIC},DATE_CREATED=#{dateCreated, jdbcType=TIMESTAMP},DATE_MODIFIED=#{dateUpdated, jdbcType=TIMESTAMP},DATA_STATUS=#{dataStatus,jdbcType=NUMERIC} where ID=#{id,jdbcType=NUMERIC}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from SYS_AUTHORITY_TB
+	    where
+	    id=#{id}
+	</delete>
+
+	<delete id="deleteAuthMenu" parameterType="int">
+		delete from SYS_MAP_AUTH_MENU_TB
+	    where
+	    AUTH_ID=#{id}
+	</delete>
+
+	<delete id="deleteAuthGrp" parameterType="int">
+		delete from SYS_MAP_AUTH_AUTHGROUP_TB
+	    where
+	    AUTH_ID=#{id}
+	</delete>
+
+	<delete id="deleteAuthRole" parameterType="int">
+		delete from SYS_MAP_ROLE_AUTH_TB
+	    where
+	    AUTH_ID=#{id}
+	</delete>
+
+	<select id="repeatedAuthName"  parameterType="com.sunyard.dispatch.common.model.AuthorityNew"  resultType="java.lang.Integer">
+		select count(id) from SYS_AUTHORITY_TB where name=#{name}
+	</select>
+
+	<select id="selectOneAuth" parameterType="java.lang.Integer"  resultMap="AuthorityNew">
+		select
+		t1.id id,
+		t1.code code,
+		t1.name name,
+		t1.description description,
+		t1.creator_id creator_id,
+		t1.modifier_id modifier_id,
+		t1.date_created date_created,
+		t1.date_modified date_modified,
+		t1.data_status data_status,
+		t3.id menu_id,
+		t3.name menu_name,
+		t5.id opea_id,
+		t5.name opea_name
+		from SYS_AUTHORITY_TB t1
+		left join SYS_MAP_AUTH_MENU_TB t2
+		on t2.auth_id=t1.id
+		left join SYS_MENU_TB t3
+		on t2.menu_id=t3.id
+		left join SYS_MAP_AUTH_OPEA_TB t4
+		on t1.id=t4.auth_id
+		left join SYS_OPERATION_TB t5
+		on t4.opea_id=t5.id
+		where t1.id=#{id}
+	</select>
+
+	<select id="selectAllMenu"  resultType="java.lang.Integer">
+		select
+		t1.id id
+		from SYS_AUTHORITY_TB t1
+	</select>
+
+	<select id="repeatedAuthCode"  parameterType="com.sunyard.dispatch.common.model.AuthorityNew"  resultType="java.lang.Integer">
+		select count(id) from SYS_AUTHORITY_TB where code=#{code}
+	</select>
+</mapper>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.FlowManageDao">
+
+	<resultMap type="com.sunyard.dispatch.model.FlowManageModel" id="flowManage">
+		<id property="id" column="ID" />
+		<result property="flowName" column="FLOW_NAME" />
+		<!-- <result property="flowCnName" column="FLOW_CN_NAME" /> -->
+		<result property="startTime" column="START_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="flowGroupid" column="FLOW_GROUPID" />
+		<result property="flowGroupName" column="FLOW_GROUP_NAME" />
+		<result property="flowStatus" column="FLOW_STATUS" />
+		<result property="execResult" column="EXEC_RESULT" />
+		<result property="workDate" column="WORK_DATE" />
+		<result property="creator" column="CREATOR" />
+		<result property="flowDesc" column="FLOW_DESC" />
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="flowName" column="FLOW_NAME" />
+		<result property="updatedBy" column="UPDATED_BY" />
+		<result property="updatedDate" column="UPDATED_DATE" />
+		<result property="flowNote" column="FLOW_NOTE" />
+		<result property="flowBranch" column="FLOW_BRANCH" />
+		<result property="jobId" column="JOB_ID" />
+		<!-- <result property="nextStarttime" column="NEXT_STARTTIME" /> -->
+		<result property="nextStartunit" column="NEXT_STARTUNIT" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.model.FlowHistoryModel" id="flowHistory">
+		<id property="id" column="ID" />
+		<result property="flowId" column="FLOW_ID" />
+		<result property="flowName" column="FLOW_NAME" />
+		<result property="flowDesc" column="FLOW_DESC" />
+		<result property="startTime" column="START_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="duration" column="DURATION" />
+		<result property="flowGroupid" column="FLOW_GROUPID" />
+		<result property="flowGroupName" column="FLOW_GROUP_NAME" />
+		<result property="flowStatus" column="FLOW_STATUS" />
+		<result property="execResult" column="EXEC_RESULT" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.model.TaskMonitorModel" id="taskMonitor">
+		<id property="id" column="ID" />
+		<result property="pid" column="PID" />
+		<result property="taskName" column="TASK_NAME" />
+		<result property="taskDesc" column="TASK_DESC" />
+		<result property="startTime" column="START_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="duration" column="DURATION" />
+		<result property="taskBelong" column="TASK_BELONG" />
+		<result property="taskStatus" column="TASK_STATUS" />
+		<result property="execResult" column="EXEC_RESULT" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.model.TimeChartModel" id="timeChart" >
+		<result property="timeHour" column="TIME_HOUR" />
+		<result property="startTime" column="START_TIME" />
+	</resultMap>
+
+	<select id="getFlowManageList" parameterType="com.sunyard.dispatch.model.form.FlowManageForm"
+		resultMap="flowManage">
+		SELECT DTFN.*,DTFG.FLOW_GROUP_NAME FROM DISPATCH_TASKETL_FLOWNAME DTFN 
+		LEFT JOIN DISPATCH_TASKETL_FLOWGROUP DTFG ON DTFG.ID = DTFN.FLOW_GROUPID 
+		WHERE  FLOW_BRANCH = '0'
+		<if test=" null!=flowName and ''!=flowName ">
+			AND FLOW_NAME LIKE '%${flowName}%'
+		</if>
+		<if test=" null!=flowGroupid and ''!=flowGroupid and 'null'!=flowGroupid">
+			AND FLOW_GROUPID = #{flowGroupid}
+		</if>
+		<if test=" null!=flowBranch and ''!=flowBranch and 'null'!=flowBranch">
+			AND FLOW_BRANCH = #{flowBranch}
+		</if>
+		LIMIT ${start},${limit}
+	</select>
+	
+	<select id="getFlowManageListCount" parameterType="com.sunyard.dispatch.model.form.FlowManageForm"
+		resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_FLOWNAME 
+		WHERE FLOW_BRANCH = '0' 
+		<if test=" null!=flowName and ''!=flowName ">
+			AND FLOW_NAME LIKE '%${flowName}%'
+		</if>
+		<if test=" null!=flowGroupid and ''!=flowGroupid and 'null'!=flowGroupid">
+			AND FLOW_GROUPID = #{flowGroupid}
+		</if>
+		<if test=" null!=flowBranch and ''!=flowBranch and 'null'!=flowBranch">
+			AND FLOW_BRANCH = #{flowBranch}
+		</if>
+	</select>
+	
+	<select id="getFlowMonitorList" parameterType="com.sunyard.dispatch.model.form.FlowMonitorForm"
+		resultMap="flowManage">
+		SELECT DTFN.*,DTFG.FLOW_GROUP_NAME FROM DISPATCH_TASKETL_FLOWNAME DTFN 
+		LEFT JOIN DISPATCH_TASKETL_FLOWGROUP DTFG ON DTFG.ID = DTFN.FLOW_GROUPID 
+		WHERE  FLOW_BRANCH = '0' AND FLOW_STATUS NOT IN ('0','4')
+		<if test=" null!=flowName and ''!=flowName ">
+			AND FLOW_NAME LIKE '%${flowName}%'
+		</if>
+		<if test=" null!=flowGroupid and ''!=flowGroupid and 'null'!=flowGroupid">
+			AND FLOW_GROUPID = #{flowGroupid}
+		</if>
+		LIMIT ${start},${limit}
+	</select>
+	
+	<select id="getFlowMonitorListCount" parameterType="com.sunyard.dispatch.model.form.FlowMonitorForm"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_FLOWNAME 
+		WHERE  FLOW_BRANCH = '0' AND FLOW_STATUS NOT IN ('0','4')
+		<if test=" null!=flowName and ''!=flowName ">
+			AND FLOW_NAME LIKE '%${flowName}%'
+		</if>
+		<if test=" null!=flowGroupid and ''!=flowGroupid and 'null'!=flowGroupid">
+			AND FLOW_GROUPID = #{flowGroupid}
+		</if>
+	</select>
+	
+	<select id="getFlowHistoryList" parameterType="com.sunyard.dispatch.model.form.FlowMonitorForm"
+		resultMap="flowHistory">
+		SELECT DTFL.*,DTFN.FLOW_NAME,DTFN.FLOW_DESC,DTFN.FLOW_GROUPID,DTFG.FLOW_GROUP_NAME,TO_SECONDS(DTFL.END_TIME)-TO_SECONDS(DTFL.START_TIME) DURATION FROM DISPATCH_TASKETL_FLOWLOGS DTFL 
+		LEFT JOIN DISPATCH_TASKETL_FLOWNAME DTFN ON DTFL.FLOW_ID = DTFN.ID
+		LEFT JOIN DISPATCH_TASKETL_FLOWGROUP DTFG ON DTFN.FLOW_GROUPID = DTFG.ID
+		WHERE  1=1 
+		<if test=" null!=flowId and ''!=flowId ">
+			AND FLOW_ID LIKE '%${flowId}%'
+		</if> 
+		<if test=" null!=flowName and ''!=flowName ">
+			AND FLOW_NAME LIKE '%${flowName}%'
+		</if>
+		<if test=" null!=flowGroupid and ''!=flowGroupid and 'null'!=flowGroupid">
+			AND FLOW_GROUPID = #{flowGroupid}
+		</if>
+		ORDER BY DTFL.START_TIME DESC 
+		LIMIT ${start},${limit}
+	</select>
+	
+	<select id="getFlowHistoryListCount" parameterType="com.sunyard.dispatch.model.form.FlowMonitorForm"
+		resultType="java.lang.Integer">
+		SELECT count(1) FROM DISPATCH_TASKETL_FLOWLOGS DTFL 
+		LEFT JOIN DISPATCH_TASKETL_FLOWNAME DTFN ON DTFL.FLOW_ID = DTFN.ID
+		LEFT JOIN DISPATCH_TASKETL_FLOWGROUP DTFG ON DTFN.FLOW_GROUPID = DTFG.ID
+		WHERE  1=1
+		<if test=" null!=flowId and ''!=flowId ">
+			AND FLOW_ID LIKE '%${flowId}%'
+		</if> 
+		<if test=" null!=flowName and ''!=flowName ">
+			AND FLOW_NAME LIKE '%${flowName}%'
+		</if>
+		<if test=" null!=flowGroupid and ''!=flowGroupid and 'null'!=flowGroupid">
+			AND FLOW_GROUPID = #{flowGroupid}
+		</if>
+	</select>
+	
+	<select id="getFlowList" parameterType="com.sunyard.dispatch.model.form.FlowManageForm" resultMap="flowManage">
+		SELECT * FROM DISPATCH_TASKETL_FLOWNAME 
+		WHERE 1=1 
+		<if test=" null!=id and ''!=id ">
+			AND ID &lt;&gt; #{id}
+		</if>
+		<if test=" null!=flowType and ''!=flowType ">
+			AND FLOW_TYPE = #{flowType}
+		</if>
+	</select>
+	
+	<select id="findFlowById" parameterType="String" resultMap="flowManage">
+		SELECT DTFN.*,DTFG.FLOW_GROUP_NAME FROM DISPATCH_TASKETL_FLOWNAME DTFN 
+		LEFT JOIN DISPATCH_TASKETL_FLOWGROUP DTFG ON DTFG.ID = DTFN.FLOW_GROUPID 
+		WHERE DTFN.ID = #{id} 
+	</select>
+	
+	<select id="findFlowByPid" parameterType="String" resultMap="flowManage">
+		SELECT * FROM DISPATCH_TASKETL_FLOWNAME 
+		WHERE PID = #{pid}
+	</select>
+	
+	<select id="findFlowByPids" parameterType="String" resultMap="flowManage">
+		SELECT * FROM DISPATCH_TASKETL_FLOWNAME 
+		WHERE PID IN (${pid})
+	</select>
+	
+	<select id="findFlowByGroupId" parameterType="Integer" resultMap="flowManage">
+		SELECT * FROM DISPATCH_TASKETL_FLOWNAME WHERE FLOW_GROUPID=#{flowGroupid}
+	</select>
+	
+	<select id="findFlowByGroupIds" parameterType="String" resultMap="flowManage">
+		SELECT * FROM DISPATCH_TASKETL_FLOWNAME WHERE FLOW_GROUPID IN (${ids})
+	</select>
+	
+	<select id="checkDependency" parameterType="String" resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_FWDEPENDENCY WHERE FLOW_ID = #{flowId}
+	</select>
+	
+	<select id="checkFlowPrev" parameterType="String" resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_FWDEPENDENCY WHERE  FLOW_PREV_ID LIKE '%${flowId},%'
+	</select>
+	
+	<select id="flowIdUnique" parameterType="String" resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_FWDEPENDENCY WHERE FLOW_ID = #{flowId}
+	</select>
+
+	<select id="findTimeChartData" parameterType="String" resultMap="timeChart">
+		<!-- SELECT (SUBSTRING(END_TIME,1,2)-SUBSTRING(START_TIME,1,2))+(SUBSTRING(END_TIME,4,2)-SUBSTRING(START_TIME,4,2))/60+(SUBSTRING(END_TIME,7,2)-SUBSTRING(START_TIME,7,2))/3600 AS TIME_HOUR,HIS_WORK_DATE FROM DISPATCH_TASKETL_FLOWLOGS 
+		WHERE FLOW_ID = #{flowId} ORDER BY HIS_WORK_DATE,END_TIME DESC LIMIT #{times} -->
+		SELECT (TO_SECONDS(END_TIME)-TO_SECONDS(START_TIME))/3600 AS TIME_HOUR,START_TIME FROM DISPATCH_TASKETL_FLOWLOGS 
+		WHERE FLOW_ID = #{flowId} ORDER BY HIS_WORK_DATE,END_TIME DESC LIMIT #{times}
+	</select>
+	
+	<select id="selectChildrenByGroupId" parameterType="String" resultType="java.util.Map">
+		SELECT ID, FLOW_NAME AS TEXT FROM DISPATCH_TASKETL_FLOWNAME WHERE FLOW_BRANCH=0 AND FLOW_GROUPID = #{parentId}
+		<!--SELECT ID, IF(FLOW_CN_NAME='',FLOW_NAME,FLOW_CN_NAME) AS TEXT FROM DISPATCH_TASKETL_FLOWNAME WHERE FLOW_BRANCH=0 AND FLOW_GROUPID = #{parentId}-->
+		<if test="name!=null and ''!=name">
+			AND (FLOW_NAME LIKE '%${name}%' <!-- OR FLOW_CN_NAME LIKE '%${name}%' -->)
+		</if>
+	</select>
+	
+	<select id="findDependencyByFlowId" parameterType="com.sunyard.dispatch.model.form.FlowDependencyForm" resultType="java.util.Map">
+		SELECT * FROM DISPATCH_TASKETL_FWDEPENDENCY 
+		WHERE 1=1 
+		<if test="flowId!=null and ''!=flowId">
+			AND FLOW_ID = #{flowId}
+		</if>
+	</select>
+	
+	<select id="findTaskNodesByFlowId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT DTT.TASK_ID NODE_ID,DTTN.TASK_NAME NODE_NAME,DTTN.TASK_STATUS NODE_STATUS FROM DISPATCH_TASKETL_TSDEPENDENCY DTT
+		LEFT JOIN DISPATCH_TASKETL_TASKNAME DTTN ON DTT.TASK_ID = DTTN.ID 
+		WHERE DTT.FLOW_ID=#{flowId} AND DTT.TASK_ID LIKE 'task%'
+	</select>
+	
+	<select id="getTaskMonitorList" parameterType="java.lang.String" resultMap="taskMonitor">
+		SELECT DTTN.ID,DTTN.PID,DTTN.TASK_NAME,DTTN.TASK_DESC,DTTN.START_TIME,DTTN.END_TIME,
+		 TO_SECONDS(DTTN.END_TIME)-TO_SECONDS(START_TIME) DURATION,DTTN.TASK_STATUS,DTTB.BELONG_NAME TASK_BELONG,DTTN.EXEC_RESULT FROM DISPATCH_TASKETL_TASKNAME DTTN
+		LEFT JOIN DISPATCH_TASKETL_TASKBELONG DTTB ON DTTN.TASK_BELONG = DTTB.ID
+		WHERE DTTN.PID=#{flowId} 
+		ORDER BY DTTN.START_TIME
+	</select>
+	
+	<select id="getTaskHistoryMonitorList" parameterType="java.lang.String" resultMap="taskMonitor">
+		SELECT DTTL.ID,DTTL.FLOW_LOG_ID PID,DTTN.TASK_NAME,DTTN.TASK_DESC,DTTL.START_TIME,DTTL.END_TIME,
+		 TO_SECONDS(DTTL.END_TIME)-TO_SECONDS(DTTL.START_TIME) DURATION,DTTL.TASK_STATUS,DTTB.BELONG_NAME TASK_BELONG,DTTL.EXEC_RESULT FROM DISPATCH_TASKETL_TASKLOGS DTTL
+		LEFT JOIN DISPATCH_TASKETL_TASKNAME DTTN ON DTTL.TASK_ID = DTTN.ID
+		LEFT JOIN DISPATCH_TASKETL_TASKBELONG DTTB ON DTTN.TASK_BELONG = DTTB.ID
+		WHERE DTTL.FLOW_LOG_ID=#{flowLogId}
+		ORDER BY DTTL.START_TIME
+	</select>
+	
+	<select id="findFlowNodesByFlowId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT DTT.TASK_ID NODE_ID,DTF.FLOW_NAME NODE_NAME,DTF.FLOW_STATUS NODE_STATUS FROM DISPATCH_TASKETL_TSDEPENDENCY DTT
+		LEFT JOIN DISPATCH_TASKETL_FLOWNAME DTF ON DTT.TASK_ID = DTF.ID 
+		WHERE DTT.FLOW_ID=#{flowId} AND DTT.TASK_ID LIKE 'flow%'
+	</select>
+	
+	<insert id="addFlowDependency" parameterType="com.sunyard.dispatch.model.form.FlowDependencyForm">
+		INSERT INTO DISPATCH_TASKETL_FWDEPENDENCY(FLOW_ID,FLOW_PREV_ID) VALUES(
+			#{flowId},
+			#{flowPrevId}
+		)
+	</insert>
+	
+	<update id="flowManageEdit" parameterType="com.sunyard.dispatch.model.form.FlowManageForm">
+		UPDATE DISPATCH_TASKETL_FLOWNAME SET 
+		<if test=" null!=flowName and ''!=flowName ">
+			FLOW_NAME = #{flowName},
+		</if>
+		<!-- <if test=" null!=flowCnName and ''!=flowCnName ">
+			FLOW_CN_NAME = #{flowCnName},
+		</if> -->
+		<if test=" null!=flowGroupid and ''!=flowGroupid ">
+			FLOW_GROUPID = #{flowGroupid},
+		</if>
+		<if test=" null!=flowDesc and ''!=flowDesc ">
+			FLOW_DESC = #{flowDesc},
+		</if>
+		<if test=" null!=flowNote and ''!=flowNote ">
+			FLOW_NOTE = #{flowNote},
+		</if>
+		<if test=" null!=workDate and ''!=workDate ">
+			WORK_DATE = #{workDate},
+		</if>
+		<if test=" null!=startTime and ''!=startTime ">
+			START_TIME = #{startTime},
+		</if>
+		<if test=" null!=updatedBy and ''!=updatedBy ">
+			UPDATED_BY = #{updatedBy},
+		</if>
+		<if test=" null!=creator and ''!=creator ">
+			CREATOR = #{creator},
+		</if>
+		<!-- <if test=" null!=nextStarttime and ''!=nextStarttime ">
+			NEXT_STARTTIME = #{nextStarttime},
+		</if> -->
+		<if test=" null!=nextStartunit and ''!=nextStartunit ">
+			NEXT_STARTUNIT = #{nextStartunit},
+		</if>
+		UPDATED_DATE = (SELECT SYSDATE()) WHERE ID = #{id} 
+	</update>
+	
+	<update id="updateFlowDependency" parameterType="com.sunyard.dispatch.model.form.FlowDependencyForm">
+		UPDATE DISPATCH_TASKETL_FWDEPENDENCY SET 
+		<if test=" null!=flowPrevId and ''!=flowPrevId ">
+			FLOW_PREV_ID = #{flowPrevId}
+		</if>
+		WHERE FLOW_ID = #{flowId}
+	</update>
+	
+	<delete id="flowManageDel" parameterType="Integer">
+		DELETE FROM DISPATCH_TASKETL_FLOWNAME WHERE ID = #{id}
+	</delete>
+	
+	<delete id="deleteFlowDependency" parameterType="com.sunyard.dispatch.model.form.FlowDependencyForm" >
+		DELETE FROM  DISPATCH_TASKETL_FWDEPENDENCY WHERE FLOW_ID = #{flowId}
+	</delete>
+	
+	<delete id="xmlDel" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_XML WHERE FLOW_ID = #{flowId}
+	</delete>
+	
+	<update id="updateFlowGroup" parameterType="String">
+		UPDATE DISPATCH_TASKETL_FLOWNAME SET FLOW_GROUPID = #{flowGroupId}
+		WHERE ID IN (${flowIds})
+	</update>
+	
+	<delete id="flowManageDelLogs" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_FLOWLOGS WHERE FLOW_ID IN (${flowId})
+	</delete>
+</mapper>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.TaskManageDao">
+
+	<resultMap type="com.sunyard.dispatch.model.TaskManageModel" id="taskManage">
+		<id property="id" column="ID" />
+		<result property="pid" column="PID" />
+		<result property="pname" column="PNAME" />
+		<result property="taskName" column="TASK_NAME" />
+		<result property="taskCnName" column="TASK_CN_NAME" />
+		<result property="startTime" column="START_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="taskBelong" column="TASK_BELONG" />
+		<result property="taskBelongName" column="TASK_BELONG_NAME" />
+		<result property="taskStatus" column="TASK_STATUS" />
+		<result property="taskAddress" column="TASK_ADDRESS" />
+		<result property="taskParameter" column="TASK_PARAMETER" />
+		<result property="execResult" column="EXEC_RESULT" />
+		<result property="taskDesc" column="TASK_DESC" />
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="flowName" column="FLOW_NAME" />
+		<result property="updatedBy" column="UPDATED_BY" />
+		<result property="updatedDate" column="UPDATED_DATE" />
+		<result property="joinNum" column="JOIN_NUM" />
+		<result property="taskRemote" column="TASK_REMOTE" />
+		<result property="taskError" column="TASK_ERROR" />
+		<result property="taskActive" column="TASK_ACTIVE" />
+		<result property="taskCustom" column="TASK_CUSTOM" />
+		<result property="errorNum" column="ERROR_NUM" />
+		<result property="taskBranch" column="TASK_BRANCH" />
+		<result property="taskLoop" column="TASK_LOOP" />
+	</resultMap>
+
+	<select id="getTaskManageList" parameterType="com.sunyard.dispatch.model.form.TaskManageForm"
+		resultMap="taskManage">
+		SELECT DTTN.*,DTFN.FLOW_NAME PNAME,DTTB.BELONG_NAME TASK_BELONG_NAME FROM DISPATCH_TASKETL_TASKNAME DTTN 
+		LEFT JOIN DISPATCH_TASKETL_FLOWNAME DTFN ON DTTN.PID = DTFN.ID 
+		LEFT JOIN DISPATCH_TASKETL_TASKBELONG DTTB ON DTTN.TASK_BELONG = DTTB.ID
+		WHERE DTTN.PID &lt;&gt; ''
+		<if test=" null!=taskName and ''!=taskName ">
+			AND TASK_NAME LIKE '%${taskName}%'
+		</if>
+		<if test=" null!=flowName and ''!=flowName ">
+			AND DTFN.FLOW_NAME LIKE '%${flowName}%'
+		</if>
+		LIMIT ${start},${limit}
+	</select>
+	
+	<select id="getTaskManageListCount" parameterType="com.sunyard.dispatch.model.form.TaskManageForm"
+		resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_TASKNAME DTTN 
+		LEFT JOIN DISPATCH_TASKETL_FLOWNAME DTFN ON DTTN.PID = DTFN.ID 
+		WHERE DTTN.PID &lt;&gt; ''
+		<if test=" null!=taskName and ''!=taskName ">
+			AND TASK_NAME LIKE '%${taskName}%'
+		</if>
+		<if test=" null!=flowName and ''!=flowName ">
+			AND DTFN.FLOW_NAME LIKE '%${flowName}%'
+		</if>
+	</select>
+	
+	<select id="findTaskById" parameterType="String" resultMap="taskManage">
+		SELECT DTTN.*,DTFN.FLOW_NAME PNAME,DTTB.BELONG_NAME TASK_BELONG_NAME FROM DISPATCH_TASKETL_TASKNAME DTTN 
+		LEFT JOIN DISPATCH_TASKETL_FLOWNAME DTFN ON DTTN.PID = DTFN.ID 
+		LEFT JOIN DISPATCH_TASKETL_TASKBELONG DTTB ON DTTN.TASK_BELONG = DTTB.ID
+		WHERE DTTN.ID = #{id}
+	</select>
+	
+	<select id="findTaskByPId" parameterType="String" resultMap="taskManage">
+		SELECT * FROM DISPATCH_TASKETL_TASKNAME WHERE PID = #{pid}
+	</select>
+	
+	<select id="findTaskByPids" parameterType="String" resultMap="taskManage">
+		SELECT * FROM DISPATCH_TASKETL_TASKNAME WHERE PID IN (${pid})
+	</select>
+	
+	<update id="taskManageEdit" parameterType="com.sunyard.dispatch.model.form.TaskManageForm">
+		UPDATE DISPATCH_TASKETL_TASKNAME SET 
+		<if test=" null!=taskName and ''!=taskName ">
+			TASK_NAME = #{taskName},
+		</if>
+		<if test=" null!=taskCnName and ''!=taskCnName ">
+			TASK_CN_NAME = #{taskCnName},
+		</if>
+		<if test=" null!=startTime and ''!=startTime ">
+			START_TIME = #{startTime},
+		</if>
+		<if test=" null!=taskBelong and ''!=taskBelong ">
+			TASK_BELONG = #{taskBelong},
+		</if>
+		<if test=" null!=taskAddress and ''!=taskAddress ">
+			TASK_ADDRESS = #{taskAddress},
+		</if>
+		<if test=" null!=taskParameter and ''!=taskParameter ">
+			TASK_PARAMETER = #{taskParameter},
+		</if>
+		<if test=" null!=taskDesc and ''!=taskDesc ">
+			TASK_DESC = #{taskDesc},
+		</if>
+		<if test=" null!=updatedBy and ''!=updatedBy ">
+			UPDATED_BY = #{updatedBy},
+		</if>
+		<if test=" null!=taskRemote and ''!=taskRemote ">
+			TASK_REMOTE = #{taskRemote},
+		</if>
+		<if test=" null!=taskError and ''!=taskError ">
+			TASK_ERROR = #{taskError},
+		</if>
+		<if test=" null!=errorNum and ''!=errorNum ">
+			ERROR_NUM = #{errorNum},
+		</if>
+		<if test=" null!=taskActive and ''!=taskActive ">
+			TASK_ACTIVE = #{taskActive},
+		</if>
+		<if test=" null!=taskCustom and ''!=taskCustom ">
+			TASK_CUSTOM = #{taskCustom},
+		</if>
+		<if test=" null!=taskBranch and ''!=taskBranch ">
+			TASK_BRANCH = #{taskBranch},
+		</if>
+		<if test=" null!=taskLoop and ''!=taskLoop ">
+			TASK_LOOP = #{taskLoop},
+		</if>
+		<if test=" null!=updatedBy and ''!=updatedBy ">
+			UPDATED_BY = #{updatedBy},
+		</if>
+		UPDATED_DATE = (select sysdate()) WHERE ID = #{id} 
+	</update>
+	
+	<delete id="delTaskDependencyByFlowId" parameterType="String" >
+		DELETE FROM DISPATCH_TASKETL_TSDEPENDENCY WHERE FLOW_ID = #{flowId}
+	</delete>
+	
+	<delete id="delTaskByIds" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_TASKNAME WHERE ID IN (${taskIds})
+	</delete> 
+	
+	<delete id="delTaskLogsByIds" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_TASKLOGS WHERE TASK_ID IN(${taskIds})
+	</delete>
+	
+	<delete id="delTaskLogsByPids" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_TASKLOGS DTTL WHERE DTTL.TASK_ID IN (
+			SELECT DISTINCT(DTTD.TASK_ID) FROM DISPATCH_TASKETL_TSDEPENDENCY DTTD WHERE DTTD.FLOW_ID IN(${pids}))
+	</delete>
+	
+</mapper>

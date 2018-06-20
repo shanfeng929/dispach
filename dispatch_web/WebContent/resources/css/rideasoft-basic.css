@@ -1,0 +1,352 @@
+/* main styles */
+
+.header {
+	background-repeat:repeat-x;
+}
+
+.x-grid-cell.rowspancell{
+	background-color:#EBEBEB;
+}
+
+.header h1 {
+	font-size: 22px;
+	color:#FFA500;
+	margin: 10px;
+}
+.submit{
+	background-image: url( ../images/submit.png ) !important;
+}
+.delete-col{
+	 background-image:url( ../images/delete.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.delete-col-margin{
+	background-image:url( ../images/delete.png ) !important;
+	width:15px;
+	height:15px;
+	margin-left:4px;
+	margin-right:4px;
+}
+.setting-col-margin{
+	background-image:url( ../images/setting.png ) !important;
+	width:15px;
+	height:15px;
+	margin-left:4px;
+	margin-right:4px;
+}
+.price-col-margin{
+	background-image:url( ../images/price.png ) !important;
+	width:15px;
+	height:15px;
+	margin-left:4px;
+	margin-right:4px;
+}
+.submit-col{
+	 background-image:url( ../images/submit.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.reduce-col{
+	 background-image:url( ../images/reduce.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.payment-col{
+	 background-image:url( ../images/payment.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.confirm-col{
+	 background-image:url( ../images/confirm.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.download-col {
+    background-image: url( ../images/download.png ) !important;
+    width:15px;
+	height:15px;
+}
+.edit-col{
+	 background-image:url( ../images/edit.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.edit-col-margin{
+	 background-image:url( ../images/edit.png ) !important;	
+	 width:15px;
+	 height:15px;
+	 margin-left:4px;
+	 margin-right:4px;
+}
+.add-col {
+     background-image: url( ../images/add.png ) !important;
+     width:15px;
+	 height:15px;
+}
+.edit0-col{
+	 background-image:url( ../images/edit.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.reply-col{
+	 background-image:url( ../images/reply.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.deny-col{
+	 background-image:url( ../images/deny.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.detail-col{
+	 background-image:url( ../images/detail.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.detail11-col{
+	 background-image:url( ../images/detail.png ) !important;	
+	 width:15px;
+	 height:15px;
+}
+.upmove-col{
+	background-image:url( ../images/data_up.png ) !important;
+	width:16px;
+	height:16px;
+}
+.run-col{
+	background-image:url( ../images/run.png ) !important;
+	width:16px;
+	height:16px;
+}
+.run-col-margin{
+	background-image:url( ../images/run.png ) !important;
+	width:16px;
+	height:16px;
+	margin-left:4px;
+	margin-right:4px;
+}
+
+.downmove-col{
+	 background-image:url( ../images/data_down.png ) !important;	
+	 width:16px;
+	 height:16px;
+}
+.column-col {
+	 background-image: url( ../images/zoom.png ) !important;	
+	 width: 16px;
+	 height: 16px;
+}
+
+.setting-col {
+	 background-image: url( ../images/setting.png ) !important;	
+	 width: 16px;
+	 height: 16px;
+}
+.s_save{
+	background-image: url( ../images/save.png ) !important;
+}
+.gopage{
+	background-image: url( ../images/gopage.png ) !important;
+}
+.add {
+    background-image: url( ../images/add.png) !important;
+}
+.print {
+    background-image: url( ../images/printer.png ) !important;
+}
+.delete {
+    background-image: url( ../images/delete.png ) !important;
+}
+.exit {
+    background-image: url( ../images/exit.png ) !important;
+}
+.insert{
+    background-image: url( ../images/insert.png ) !important;
+}
+.calc{
+    background-image: url( ../images/calc.png ) !important;
+}
+.forecast{
+    background-image: url( ../images/forecast.png ) !important;
+}
+.download {
+    background-image: url( ../images/download.png ) !important;
+}
+.import {
+    background-image: url( ../images/import.png ) !important;
+}
+.export {
+    background-image: url( ../images/export.png ) !important;
+}
+.search {
+    background-image: url( ../images/search.png ) !important;
+}
+.deny {
+    background-image: url( ../images/deny.png ) !important;
+}
+.detail {
+    background-image: url( ../images/detail.png ) !important;
+}
+.reset {
+    background-image: url( ../images/reset.png ) !important;
+}
+.check {
+    background-image: url( ../images/check.png) !important;
+}
+.save {
+    background-image: url( ../images/save.png ) !important;
+}
+.additem {
+    background-image: url( ../images/additem.png ) !important;
+}
+.edit {
+    background-image: url( ../images/edit.png ) !important;
+}
+.refresh {
+    background-image: url( ../images/refresh.png ) !important;
+}
+.enable {
+    background-image: url( ../images/enable.png ) !important;
+}
+.disable {
+    background-image: url( ../images/disable.png ) !important;
+}
+.close{
+	 background-image: url( ../images/close.png ) !important;	
+}
+.cancel{
+	 background-image: url( ../images/close.png ) !important;	
+}
+.gridAction{
+	cursor:pointer
+}
+.eidtable {
+	background-color: #EEFFBB; !important
+}
+/* custom icon for the ActionColumn icon */
+
+.x-action-col-cell img.detail {
+     background-image: url(../images/detail.png);
+}
+.x-tab-default-top .x-tab-inner {
+	height: 14px !important;
+	line-height: 14px !important;
+}
+.x-grid-row-summary .x-grid-cell-inner{
+	font-size: 14px;
+	background-color:#ECECEC;
+}
+.x-grid-cell.funds {
+	background-color: #DFE8F6;
+}
+.x-grid-cell.better {
+	background-color: #EEFFBB;
+}
+.hidenBorderWithNoColor{
+	background:none; 
+	border-right: 0px solid;
+	border-top: 0px solid;
+	border-left: 0px solid;
+	border-bottom: #94a9bc 1px solid;
+	font-size:14px;
+}
+.menuCls{
+	font-weight:bold;
+}
+.marginWidth{
+	margin-right:3px;
+}
+.hidenBorder{
+	background:none; 
+	border-right: 0px solid;
+	border-top: 0px solid;
+	border-left: 0px solid;
+	border-bottom: #94a9bc 1px solid;
+	font-size:14px;
+	color: #ff0000 !important;
+}
+.hidenForDetailBorder{
+	background:none; 
+	border-right: 0px solid;
+	border-top: 0px solid;
+	border-left: 0px solid;
+	border-bottom: #94a9bc 1px solid;
+}
+.x-action-col-cell img.icon-del{
+	background-image: url("../images/delete.gif");
+}
+.Msg-WARNING {
+	background-image: url(../images/warning.gif);
+}
+.red-row .x-grid-cell{
+    background-color:#FF5151 !important;
+}
+.green-row .x-grid-cell{
+    background-color:#4EFEB3 !important;
+}
+.first-level-warning {
+	background-image: url(../images/first-level.gif) !important;
+	width:60px;
+	height:20px;
+}
+.second-level-warning {
+	background-image: url(../images/second-level.gif) !important;
+	width:60px;
+	height:20px;
+}
+.third-level-warning {
+	background-image: url(../images/third-level.gif) !important;
+	width:60px;
+	height:20px;
+	align: center;	
+}
+.normal-level-warning {
+	background-image: url(../images/normal-level.png) !important;
+	width:60px;
+	height:20px;	
+	margin-left: 5px;
+}
+.readonly {
+	background-color: #F7F7F7;
+	border: 1px solid #D9D9D9;/******#EAEAEA******/
+}
+.headerRoleColor {
+	background-color: rgb(245,236,167);
+}
+.tooltipArea {
+	background-color: #F5F5F5;
+	border: 0px solid;
+	color: red;
+}
+/***************************headCls******start**********************************/
+.headerExit{
+	 float:right;
+	 padding:28px 0px 0px 0px;
+	 margin-top:-94px;
+	 border:0;
+	 background-size:59px 47px;
+	 background-color:transparent;
+	 background-image: url( ../images/h_exit.png ) !important;
+	 background-repeat:no-repeat;
+}
+.headerUser {
+	float:right;
+	position:relative;
+	z-index: 5;
+	padding: 0px 10px 0px 0px;
+	margin-top:-22px;
+	border:0;
+}
+.headerRole {
+	float:right;
+	position:relative;
+	z-index: 10;
+	margin-top:-29px;
+	margin-right:162px;
+	border:0;
+	background-color:rgb(245 236 167);
+}
+.noticeback{
+	background-color:#F5F5F5 !important;
+}

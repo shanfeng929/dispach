@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.FlowGroupDao">
+
+	<resultMap type="com.sunyard.dispatch.model.FlowGroupModel" id="flowGroup">
+		<id property="id" column="ID" />
+		<result property="flowGroupName" column="FLOW_GROUP_NAME" />
+		<result property="flowGroupDesc" column="FLOW_GROUP_DESC" />
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updatedBy" column="UPDATED_BY" />
+		<result property="updatedDate" column="UPDATED_DATE" />
+	</resultMap>
+
+	<select id="getFlowGroupPageList" parameterType="com.sunyard.dispatch.model.form.FlowGroupForm"
+		resultMap="flowGroup">
+		SELECT * FROM DISPATCH_TASKETL_FLOWGROUP WHERE 1=1 
+		<if test=" null!=flowGroupName and ''!=flowGroupName ">
+			AND FLOW_GROUP_NAME LIKE '%${flowGroupName}%'
+		</if>
+		LIMIT ${start},${limit}
+	</select>
+	
+	<select id="getFlowGroupList" parameterType="com.sunyard.dispatch.model.form.FlowGroupForm"
+		resultMap="flowGroup">
+		SELECT * FROM DISPATCH_TASKETL_FLOWGROUP WHERE 1=1 
+		<if test=" null!=flowGroupName and ''!=flowGroupName ">
+			AND FLOW_GROUP_NAME LIKE '%${flowGroupName}%'
+		</if>
+	</select>
+	
+	<select id="getFlowGroupListCount" parameterType="com.sunyard.dispatch.model.form.FlowGroupForm"
+		resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_FLOWGROUP WHERE 1=1 
+		<if test=" null!=flowGroupName and ''!=flowGroupName ">
+			AND FLOW_GROUP_NAME LIKE '%${flowGroupName}%'
+		</if>
+	</select>
+	
+	<select id="findFlowById" parameterType="Integer" resultMap="flowGroup">
+		SELECT * FROM DISPATCH_TASKETL_FLOWGROUP WHERE ID = #{id} 
+	</select>
+	
+	<select id="selectRootFlow" parameterType="String" resultType="java.util.Map">
+		SELECT ID,FLOW_GROUP_NAME AS TEXT FROM DISPATCH_TASKETL_FLOWGROUP 
+		WHERE PARENT_ID = #{parentId}
+	</select>
+	
+	<select id="selectChildFlowGroup" parameterType="String" resultType="java.util.Map">
+		SELECT ID,FLOW_GROUP_NAME AS TEXT FROM DISPATCH_TASKETL_FLOWGROUP 
+		WHERE PARENT_ID = #{parentId}
+	</select>
+	
+	<insert id="flowGroupAdd" parameterType="com.sunyard.dispatch.model.form.FlowGroupForm">
+		INSERT INTO DISPATCH_TASKETL_FLOWGROUP(FLOW_GROUP_NAME,FLOW_GROUP_DESC,CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE)  VALUES(
+			#{flowGroupName},
+			#{flowGroupDesc},
+			#{createBy},
+			(SELECT SYSDATE()),
+			#{createBy},
+			(SELECT SYSDATE())
+		)
+	</insert>
+	
+	<update id="flowGroupEdit" parameterType="com.sunyard.dispatch.model.form.FlowGroupForm">
+		UPDATE DISPATCH_TASKETL_FLOWGROUP SET 
+		<if test=" null!=flowGroupName and ''!=flowGroupName ">
+			FLOW_GROUP_NAME = #{flowGroupName},
+		</if>
+		<if test=" null!=flowGroupDesc and ''!=flowGroupDesc ">
+			FLOW_GROUP_DESC = #{flowGroupDesc},
+		</if>
+		<if test=" null!=updatedBy and ''!=updatedBy ">
+			UPDATED_BY = #{updatedBy},
+		</if>
+		UPDATED_DATE = (SELECT SYSDATE()) WHERE ID = #{id} 
+	</update>
+	
+	<!-- <delete id="flowGroupDel" parameterType="java.lang.Integer">
+		DELETE FROM DISPATCH_TASKETL_FLOWGROUP WHERE ID=#{id}
+	</delete> -->
+	
+	<delete id="flowGroupDelByIds" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_FLOWGROUP WHERE ID IN (${ids})
+	</delete>
+	
+	<select id="getFlowGroupTreeData" parameterType="String" resultType="java.util.Map">
+		SELECT id,flow_group_name as text,PARENT_ID as parentId,FLOW_GROUP_DESC FROM DISPATCH_TASKETL_FLOWGROUP WHERE PARENT_ID = #{pid}
+	</select>
+	
+	<select id="getChildPackage" parameterType="String" resultType="java.util.Map">
+		SELECT * FROM DISPATCH_TASKETL_FLOWGROUP WHERE PARENT_ID = #{pid}
+	</select>
+	
+	<insert id="insertFlowGroup" parameterType="com.sunyard.dispatch.model.form.FlowGroupForm">
+		INSERT INTO DISPATCH_TASKETL_FLOWGROUP(FLOW_GROUP_NAME,FLOW_GROUP_DESC,PARENT_ID,CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE)  VALUES(
+			#{flowGroupName},
+			#{flowGroupDesc},
+			#{parentId},
+			#{createBy},
+			(SELECT SYSDATE()),
+			#{updatedBy},
+			(SELECT SYSDATE())
+		)
+	</insert>
+	
+	<insert id="insertFlowGroupRoot" parameterType="com.sunyard.dispatch.model.form.FlowGroupForm">
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		INSERT INTO DISPATCH_TASKETL_FLOWGROUP(FLOW_GROUP_NAME,FLOW_GROUP_DESC,PARENT_ID,CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE)  VALUES(
+			#{flowGroupName},
+			#{flowGroupDesc},
+			'11',
+			#{createBy},
+			(SELECT SYSDATE()),
+			#{updatedBy},
+			(SELECT SYSDATE())
+		)
+	</insert>
+	
+	<update id="updateFlowGroup" parameterType="com.sunyard.dispatch.model.form.FlowGroupForm">
+		UPDATE DISPATCH_TASKETL_FLOWGROUP SET 
+		<if test=" null!=flowGroupName and ''!=flowGroupName ">
+			FLOW_GROUP_NAME = #{flowGroupName},
+		</if>
+		<if test=" null!=flowGroupDesc and ''!=flowGroupDesc ">
+			FLOW_GROUP_DESC = #{flowGroupDesc},
+		</if>
+		<if test=" null!=updatedBy and ''!=updatedBy ">
+			UPDATED_BY = #{updatedBy},
+		</if>
+		UPDATED_DATE = (SELECT SYSDATE()) WHERE ID = #{id} 
+	</update>
+	
+	<delete id="deleteFlowGroup" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_FLOWGROUP WHERE ID = #{id}
+	</delete>
+		
+</mapper>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.UserGroupDao">
+	
+	<resultMap type="com.sunyard.dispatch.common.model.User" id="User">
+		<id property="id" column="userId" />
+		<result property="code" column="userCode" />
+		<result property="loginName" column="login_name" />
+		<result property="realName" column="real_name" />
+		<result property="alpha" column="alpha" />
+		<result property="password" column="password" />
+		<result property="phone" column="phone" />
+		<result property="post" column="post" />
+		<result property="locked" column="locked" />
+		<result property="expiredAt" column="expired_at" />
+		<result property="passwordExpiredAt" column="password_expired_at" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_updated" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	<resultMap type="com.sunyard.dispatch.common.model.Role" id="Role"  >
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="type" column="type" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_updated" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.common.model.UserGroup" id="UserGroup">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="text" />
+		<result property="description" column="des" />
+		<result property="parentId" column="parent_id" />
+	</resultMap>
+	
+	<select id="selectRootUserGroup" resultType="java.util.Map">
+		select 
+			sugt.id id, 
+			sugt.name text, 
+			sugt.code code, 
+			sugt.description des,
+			sugt.parent_id parent_id,
+			sugt.data_status dataStatus
+		from sys_user_group_tb sugt
+  		where sugt.data_status = 0 and sugt.parent_id is null
+	</select>
+	<select id="selectChildrenByGroupId" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select 
+			sugt.id id, 
+			sugt.name text, 
+			sugt.code code, 
+			sugt.description des,
+			sugt.parent_id parent_id,
+			sugt.data_status dataStatus
+  		from sys_user_group_tb sugt
+  		where sugt.data_status = 0 and sugt.parent_id = #{groupId}
+	</select>
+	
+	<select id="selectUserByGroupId" parameterType="java.lang.Integer" resultType="java.util.Map">
+		 select 
+    		syt.id userId,
+    		syt.code userCode,
+    		syt.login_name,
+    		syt.real_name
+    	from sys_user_tb syt where exists (select id from sys_map_user_usergroup_tb smuup where smuup.usergroup_id=#{groupId}  and smuup.user_id=syt.id )
+    	and syt.data_status = 0
+	</select>
+	
+	<select id="queryUsers" resultMap="User">
+		select 
+			real_name real_name,
+			login_name login_name,
+			id userId
+		from sys_user_tb
+	</select>
+	
+	<select id="querySelectUser" parameterType="java.lang.Integer" resultMap="User">
+		 select 
+    		sut.id userId,
+      		sut.real_name real_name
+     	from sys_user_group_tb sugt
+     	left join sys_map_user_usergroup_tb smuut on  sugt.id=smuut.usergroup_id
+     	left join sys_user_tb sut on smuut.user_id=sut.id
+     	where sugt.id=#{id} 
+	</select>
+	<select id="querySelectRole" parameterType="java.lang.Integer" resultMap="Role">
+		select 
+     		srt.id id,
+     		srt.name name
+      	from sys_user_group_tb sugt
+     	left join sys_map_role_usergroup_tb smrut on smrut.usergroup_id=sugt.id
+     	left join sys_role_tb srt on smrut.role_id=srt.id
+      	where sugt.id=#{id}
+	</select>
+	
+	
+	<select id="repeatedUserGroup"  parameterType="com.sunyard.dispatch.common.model.UserGroup"  resultType="java.lang.Integer">
+		select count(id) from sys_user_group_tb where name=#{name}
+	</select>
+	
+	<insert id="insertUserGroup" parameterType="com.sunyard.dispatch.common.model.UserGroup">
+		<selectKey resultType="Integer" order="BEFORE" keyProperty="id">
+			select sys_user_group_seq.nextval as id from dual
+		</selectKey>
+		insert into sys_user_group_tb(id,name,code,description,parent_id,data_status,date_created) values
+    	(#{id,jdbcType=INTEGER},
+    	#{name,jdbcType=VARCHAR},
+    	#{code,jdbcType=VARCHAR},
+   	    #{description,jdbcType=VARCHAR},
+		#{parentId,jdbcType=INTEGER},
+		#{dataStatus,jdbcType=INTEGER},
+   		CURRENT_TIMESTAMP)
+	</insert>
+	<insert id="insertUserUserGroup" parameterType="java.util.List">
+		insert into sys_map_user_usergroup_tb(user_id,usergroup_id )
+		<foreach item="item" index="" collection="list" separator=" union all " >
+			select #{item.userId} user_id,#{item.userGroupId} usergroup_id from sysibm.dual
+		</foreach>
+	</insert>
+	<insert id="insertRoleUserGroup" parameterType="java.util.List">
+		insert into sys_map_role_usergroup_tb(role_id,usergroup_id )
+		<foreach item="item" index="" collection="list" separator=" union all " >
+			select #{item.roleId} role_id,#{item.userGroupId} usergroup_id from sysibm.dual
+		</foreach>
+	</insert>
+	<select id="selectUserGpName" resultType="java.lang.String">
+		select name from sys_user_group_tb where id=#{id}
+	</select>
+	<update id="updateUserGroup" parameterType="com.sunyard.dispatch.common.model.UserGroup">
+		update sys_user_group_tb set
+		name=#{name,jdbcType=VARCHAR},
+		code=#{code,jdbcType=VARCHAR},
+		description=#{description,jdbcType=VARCHAR},
+		parent_id=#{parentId,jdbcType=INTEGER},
+		date_modified=CURRENT_TIMESTAMP
+		where id=#{id,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteUserUserGroup"  parameterType="java.lang.Integer">
+		delete from sys_map_user_usergroup_tb where usergroup_id=#{id}
+	</delete>
+	<delete id="deleteRoleUserGroup"  parameterType="java.lang.Integer">
+		delete from sys_map_role_usergroup_tb where usergroup_id=#{id}
+	</delete>  
+	
+	<update id="deleteUserGroup"  parameterType="java.lang.Integer">
+		update sys_user_group_tb sugt set  sugt.data_status=4 where id=#{id}
+	</update>
+	
+	<select id="selectUserGpId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select t.usergroup_id id from sys_map_user_usergroup_tb t where user_id=#{id}
+	</select>
+	
+	<select id="selectUserGpRole" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select t.role_id id from sys_map_role_usergroup_tb t where usergroup_id=#{id}
+	</select>
+	
+</mapper>

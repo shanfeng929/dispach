@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.OperationDao">
+
+	<resultMap type="com.sunyard.dispatch.common.model.Operation"
+		id="Operation">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="leaf" column="leaf" />
+		<result property="prefix" column="prefix" />
+		<result property="suffix" column="suffix" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.common.model.OperationIncludeAuthorityVO"
+		id="OperationIncludeAuthorityVO">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="leaf" column="leaf" />
+		<result property="prefix" column="prefix" />
+		<result property="suffix" column="suffix" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status" />
+		<result property="dataStatus" column="data_status" />
+		<association property="authority" javaType="com.sunyard.dispatch.common.model.Authority" resultMap="Authority" columnPrefix="auth_" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.dispatch.common.model.Authority"
+		id="Authority">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="type" column="type" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_modified" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	
+	<select id="selectOperationByAuthority" parameterType="java.lang.Integer"
+		resultMap="Operation">
+		select 
+			co.id id,
+			co.name name,
+			co.parent_id parent_id,
+			co.leaf leaf,
+			co.description description,
+			co.dis_order dis_order,
+			co.prefix prefix,
+			co.suffix suffix,
+			co.creator_id creator_id,
+			co.modifier_id modifier_id,
+			co.date_created date_created,
+			co.date_modified date_modified,
+			co.data_status data_status
+		from sys_operation_tb co
+		where co.data_status = 0
+		and exists (
+			select cmao.opea_id from sys_map_auth_opea_tb cmao where cmao.opea_id = co.id and cmao.auth_id = #{id}
+		)
+	</select>
+	
+	<select id="selectOperationWithAuthorityCode" resultMap="OperationIncludeAuthorityVO" >
+		select 
+		    co.code code,
+		    co.name name,
+		    co.prefix prefix,
+		    co.suffix suffix,
+		    ca.code auth_code
+		from sys_operation_tb co
+		left join sys_map_auth_opea_tb cmao on cmao.opea_id = co.id
+		left join sys_authority_tb ca on ca.id = cmao.auth_id and ca.data_status = 0
+		where co.data_status = 0 
+	</select>
+	
+	<select id="selectRootOperation" resultType="java.util.Map">
+		select 
+			co.id id,
+			co.name name,
+			co.parent_id parent_id,
+			co.leaf leaf,
+			co.description description,
+			co.dis_order dis_order,
+			co.prefix prefix,
+			co.suffix suffix,
+			co.creator_id creator_id,
+			co.modifier_id modifier_id,
+			co.date_created date_created,
+			co.date_modified date_modified,
+			co.data_status data_status
+		from sys_operation_tb co
+		where co.parent_id is null
+	</select>
+	
+	<select id="selectChildrenByGroupId"  parameterType="java.lang.Integer" resultType="java.util.Map">
+		select 
+			co.id id,
+			co.name name,
+			co.parent_id parent_id,
+			co.leaf leaf,
+			co.description description,
+			co.dis_order dis_order,
+			co.prefix prefix,
+			co.suffix suffix,
+			co.creator_id creator_id,
+			co.modifier_id modifier_id,
+			co.date_created date_created,
+			co.date_modified date_modified,
+			co.data_status data_status
+		from sys_operation_tb co
+		where co.parent_id = #{parent_id}
+	</select>
+	
+</mapper>

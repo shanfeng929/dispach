@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dispatch.common.dao.AuthMenuDao">
+	<resultMap type="com.sunyard.dispatch.common.model.AuthMenu" id="AuthMenu">
+			<result property="authId" column="AUTH_ID" />
+			<result property="menuId" column="MENU_ID" />
+	</resultMap>
+	
+	<insert id="insertAuthMenu" parameterType="com.sunyard.dispatch.common.model.AuthMenu">
+    	insert into SYS_MAP_AUTH_MENU_TB(AUTH_ID,MENU_ID)
+    	values(#{authId},#{menuId})
+	</insert>
+
+	<update id="updateAuthMenu" parameterType="com.sunyard.dispatch.common.model.AuthMenu">
+		update SYS_MAP_AUTH_MENU_TB set MENU_ID=#{menuId} where AUTH_ID=#{authId}
+	</update>
+
+	<select id="selectAllAuthMenu" resultMap="AuthMenu">
+		select AUTH_ID AUTH_ID,MENU_ID MENU_ID from  SYS_MAP_AUTH_MENU_TB where  AUTH_ID=#{authId}
+	</select>
+
+	<delete id="delete">
+		delete from  SYS_MAP_AUTH_MENU_TB where AUTH_ID=#{authId}
+	</delete>
+</mapper>

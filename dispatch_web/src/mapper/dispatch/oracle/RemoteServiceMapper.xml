@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.RemoteServiceDao">
+
+	<resultMap type="com.sunyard.dispatch.model.RemoteServiceModel" id="remoteService">
+		<id property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="remoteDesc" column="REMOTE_DESC" />
+		<result property="remoteIp" column="REMOTE_IP" />
+		<result property="remoteUserName" column="REMOTE_USER_NAME" />
+		<result property="remotePasswd" column="REMOTE_PASSWD" />
+		<!-- <result property="remoteType" column="REMOTE_TYPE" />
+		<result property="remotePort" column="REMOTE_PORT" />
+		<result property="remoteNameSpace" column="REMOTE_NAMESPACE" /> -->
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updatedBy" column="UPDATED_BY" />
+		<result property="updatedDate" column="UPDATED_DATE" />
+	</resultMap>
+
+	<select id="getRemoteServiceList" parameterType="com.sunyard.dispatch.model.form.RemoteServiceForm"
+		resultMap="remoteService">
+		select * from (SELECT rownum as rm, t.* FROM DISPATCH_TASKETL_REMOTE t WHERE 1=1
+		<if test=" null!=name and ''!=name ">
+			AND t.NAME LIKE '%${name}%'
+		</if>
+		<if test="null!=remoteIp and ''!=remoteIp">
+			AND t.REMOTE_IP LIKE '%${remoteIp}%'
+		</if> and rownum &lt; ${end}) t1 where t1.rm &gt; ${start}
+	</select>
+	
+	<select id="getRemoteServiceListCount" parameterType="com.sunyard.dispatch.model.form.RemoteServiceForm"
+		resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_REMOTE WHERE 1=1 
+		<if test=" null!=name and ''!=name ">
+			AND NAME LIKE '%${name}%'
+		</if>
+		<if test="null!=remoteIp and ''!=remoteIp">
+			AND REMOTE_IP LIKE '%${remoteIp}%'
+		</if>
+	</select>
+	
+	<select id="getRemoteServiceById" parameterType="Integer" resultMap="remoteService">
+		SELECT * FROM DISPATCH_TASKETL_REMOTE WHERE ID = #{id}
+	</select>
+	
+	<!-- <select id="getMD5Password" parameterType="String" resultType="String">
+		SELECT MD5(#{remotePasswd}) 
+	</select> -->
+	
+	<insert id="remoteServiceAdd" parameterType="com.sunyard.dispatch.model.form.RemoteServiceForm">
+		INSERT INTO DISPATCH_TASKETL_REMOTE(id,NAME,REMOTE_IP,<!-- REMOTE_TYPE, -->REMOTE_USER_NAME,REMOTE_PASSWD,<!-- REMOTE_PORT,REMOTE_NAMESPACE,REMOTE_DESC, -->CREATE_BY,CREATE_DATE,UPDATED_BY,UPDATED_DATE) VALUES
+		(<!-- #{id}, -->
+		DISPATCH_TASKETL_REMOTE_ID_SEQ.nextval,
+		#{name},
+		#{remoteIp},
+		<!-- #{remoteType}, -->
+		#{remoteUserName},
+		#{remotePasswd},
+		<!-- #{remotePort},
+		#{remoteNameSpace},
+		#{remoteDesc}, -->
+		#{createBy},
+		sysdate,
+		#{createBy},
+		sysdate
+		)
+	</insert>
+	
+	<update id="remoteServiceEdit" parameterType="com.sunyard.dispatch.model.form.RemoteServiceForm">
+		UPDATE DISPATCH_TASKETL_REMOTE SET 
+		<if test=" null!=name and ''!=name ">
+			NAME = #{name},
+		</if>
+		<if test=" null!=remoteIp and ''!=remoteIp ">
+			REMOTE_IP = #{remoteIp},
+		</if>
+		<!-- <if test=" null!=remoteType and ''!=remoteType ">
+			REMOTE_TYPE = #{remoteType},
+		</if> -->
+		<if test=" null!=remoteUserName and ''!=remoteUserName ">
+			REMOTE_USER_NAME = #{remoteUserName},
+		</if>
+		<if test=" null!=remotePasswd and ''!=remotePasswd ">
+			REMOTE_PASSWD = #{remotePasswd},
+		</if>
+		<!-- <if test=" null!=remotePort and ''!=remotePort ">
+			REMOTE_PORT = #{remotePort},
+		</if>
+		<if test=" null!=remoteNameSpace and ''!=remoteNameSpace ">
+			REMOTE_NAMESPACE = #{remoteNameSpace},
+		</if> -->
+		<if test=" null!=remoteDesc and ''!=remoteDesc ">
+			REMOTE_DESC = #{remoteDesc},
+		</if>
+		<if test=" null!=updatedBy and ''!=updatedBy ">
+			UPDATED_BY = #{updatedBy},
+		</if>
+		UPDATED_DATE = sysdate WHERE ID = #{id} 
+	</update>
+	
+	<!-- <delete id="remoteServiceDel" parameterType="java.lang.Integer">
+			DELETE FROM DISPATCH_TASKETL_REMOTE WHERE ID=#{id}
+		</delete> -->
+	
+	<delete id="remoteServiceDelByIds" parameterType="String">
+		DELETE FROM DISPATCH_TASKETL_REMOTE WHERE ID IN (${ids})
+	</delete>
+	
+	<select id="checkUnique" parameterType="com.sunyard.dispatch.model.form.RemoteServiceForm" resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_REMOTE WHERE REMOTE_IP = #{remoteIp} 
+		<if test="id!=null and ''!=id">
+			AND ID = #{id}
+		</if>
+	</select>
+	
+	<select id="checkIsRelated" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_TASKNAME WHERE TASK_BELONG=1 AND TASK_REMOTE IN(${ids})
+	</select>
+		
+</mapper>

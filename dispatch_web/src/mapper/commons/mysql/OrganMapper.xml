@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.OrganDao">
+	<resultMap type="com.sunyard.dispatch.common.model.Organ" id="Organ">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="shortName" column="short_name" />
+		<result property="parent" column="parent_id" />
+		<result property="disOrder" column="dis_order" />
+		<result property="description" column="description" />
+		<result property="dataStatus" column="data_status" />
+		<association property="parent" javaType="com.sunyard.dispatch.common.model.Organ">
+			<result property="id" column="id" />
+			<result property="code" column="code" />
+			<result property="name" column="name" />
+			<result property="shortName" column="short_name" />
+			<result property="disOrder" column="dis_order" />
+			<result property="description" column="description" />
+			<result property="dataStatus" column="data_status" />
+		</association>
+	</resultMap>
+	<!-- 执行增加操作的SQL语句。id和parameterType 分别与dao接口中的addLogger方法的名字和 参数类型一致。以#{operator}的形式引用SysLogger参数 
+		的operator属性，MyBatis将使用反射读取SysLogger参数 的此属性。#{operator}中operator大小写敏感。引用其他的gender等属性与此一致 -->
+	<insert id="addOraganItem" useGeneratedKeys="true" keyProperty="id" parameterType="com.sunyard.dispatch.common.model.Organ" >
+		insert into 
+		SYS_ORGAN_TB
+		  (
+		   CODE,
+		   NAME,
+		   SHORT_NAME,
+		   PARENT_ID,
+		   DIS_ORDER,
+		   DESCRIPTION,
+		   CREATOR_ID,
+		   MODIFIER_ID,
+		   DATE_CREATED,
+		   DATE_MODIFIED,
+		   DATA_STATUS)
+		 VALUES(
+		   #{code},
+		   #{name},
+		   #{shortName},
+		   #{parent.id},
+		   #{disOrder},
+		   #{description},
+		   '1',
+		   '1',
+		   CURRENT_TIMESTAMP,
+		   CURRENT_TIMESTAMP,
+		   '1'
+		 )
+	</insert>
+	<!--查询机构集合用作树形展示-->
+	<select id="selectOrganTreeList" resultMap="Organ" >
+		select o1.id,
+	       o1.name,
+	       o1.code,
+	       o1.short_name,
+	       o1.path,
+	       o1.leaf,
+	       o1.dis_order,
+	       o1.description,
+	       o2.id,
+	       o2.name,
+	       o2.code,
+	       o2.short_name,
+	       o2.path,
+	       o2.leaf,
+	       o2.dis_order,
+	       o2.description ,
+	  	from SYS_ORGAN_TB o1 left join SYS_ORGAN_TB o2
+	  	on o2.parent_id = o1.id
+	 	where o1.data_status in (0,1,2,3)
+	</select>
+	
+	
+	
+	
+	<select id="selectRootOrganGroup" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select 
+      		sot.id id, 
+      		sot.name text,
+      		sot.short_name shortName, 
+     		sot.code code, 
+      		sot.description description,
+      		sot.parent_id parentId,
+
+      		sot.data_status dataStatus,
+      		sot.dis_order disOrder
+    	from SYS_ORGAN_TB sot
+        where sot.data_status = 1 and sot.parent_id = #{organId}
+	</select>
+	<select id="selectChildrenByOrganId" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select 
+			sot.id id, 
+      		sot.name text,
+      		sot.short_name shortName, 
+      		sot.code code, 
+      		sot.description description,
+      		sot.parent_id parentId,
+
+      		sot.data_status dataStatus,
+      		sot.dis_order disOrder
+  		from SYS_ORGAN_TB sot
+  		where sot.data_status = 1 and sot.parent_id = #{organId}
+	</select>
+	
+	<select id="selectOrganByOrganId" 
+		resultType="java.util.Map">
+		select 
+			sot.id id, 
+      		sot.name text, 
+      		sot.code code 
+  		from SYS_ORGAN_TB sot
+  		where sot.data_status = #{dataStatus} 
+  		<if test="null == organId or organId =='' ">
+  			and sot.parent_id is null 
+  		</if>
+  		<if test="null != organId and organId !='' ">
+  			and sot.parent_id = #{organId}
+  		</if>
+  		order by sot.dis_order ,sot.id  
+	</select>
+	
+	
+	
+	<select id="queryParentName" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select 
+			sot.id id,
+			sot.name name
+  		from SYS_ORGAN_TB sot
+  		where id = #{id,jdbcType=INTEGER}
+  		 and  data_status = 1
+	</select>
+	
+	<select id="repeatedOrganName"  parameterType="com.sunyard.dispatch.common.model.form.OrganForm"  resultType="java.lang.Integer">
+		select count(id) from SYS_ORGAN_TB where name=#{name} 
+		<if test="null != id and id > 0 ">
+  			and id!=#{id}
+  		</if>
+	</select>
+	
+	<select id="repeatedOrganCode"  parameterType="com.sunyard.dispatch.common.model.form.OrganForm"  resultType="java.lang.Integer">
+		select count(id) from SYS_ORGAN_TB where code=#{code}
+		<if test="null != id and id > 0 ">
+  			and id!=#{id}
+  		</if>
+	</select>
+	
+	<select id="selectOrganById" resultMap="Organ">
+		select * from SYS_ORGAN_TB where id=#{id}
+	</select>
+	
+	<update id="modifyOrgan" parameterType="com.sunyard.dispatch.common.model.form.OrganForm"  >
+		update SYS_ORGAN_TB sot set
+			sot.code=#{code,jdbcType=VARCHAR},
+      		sot.name=#{name,jdbcType=VARCHAR},
+      		sot.short_name=#{shortName,jdbcType=VARCHAR},
+      		sot.dis_order=#{disOrder,jdbcType=INTEGER},
+      		sot.description=#{description,jdbcType=VARCHAR},
+      		sot.data_status=#{dataStatus,jdbcType=INTEGER},
+      		sot.date_modified=CURRENT_TIMESTAMP,
+      		sot.modifier_id=(select id as modifier_id from SYS_USER_TB where login_name=#{loginName})
+      	where sot.id=#{id,jdbcType=INTEGER}
+	</update>
+	<insert id="insertOrgan" useGeneratedKeys="true" keyProperty="id" parameterType="com.sunyard.dispatch.common.model.form.OrganForm">
+		
+		 insert into SYS_ORGAN_TB(code, name, short_name, parent_id, dis_order, description, creator_id, date_created, data_status)
+        values(
+        #{code},
+        #{name},
+    	#{shortName},
+    	#{parentId},
+    	#{id},
+   	    #{description},
+		(select id as creator_id from SYS_USER_TB where login_name=#{loginName}),
+		CURRENT_TIMESTAMP,
+		1
+		)
+	</insert>
+	
+	<update id="deleteOrgan"  parameterType="java.lang.Integer">
+		
+		delete from SYS_ORGAN_TB  where SYS_ORGAN_TB.id = #{id}
+	</update>
+	
+	<select id="selectUserIdByOrganId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select * from SYS_MAP_USER_ORGAN_TB where organ_id=#{id}
+	</select>
+	
+	
+	<select id="selectOrganByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select PARENT_ID from SYS_ORGAN_TB where ID = (select organ_id from SYS_MAP_USER_ORGAN_TB where user_id =#{userId})
+	</select>
+</mapper>

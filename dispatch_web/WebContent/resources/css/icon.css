@@ -1,0 +1,420 @@
+.r-banner {
+	background-image: url(../images/banner/bg-liner.png) !important;
+	height:60px;
+} 
+/* 标题头-LOGO */
+.r-logo {
+	height: 60px;
+	background-image: url(../images/banner/logo_dispatch.png) !important;
+	background-repeat: no-repeat !important;
+}
+/* 标题菜单距离左侧Logo距离*/
+.r-img-menu {
+	margin: 0 0 0 100px !important;
+}
+/* 调试tabpanel上方线高度*/
+.x-tab-bar-top .x-tab-bar-strip {
+    top: 26px !important;
+    border-width: 1px 0px 1px !important;
+    height: 1px !important;
+}
+/* 标题菜单图片按钮背景色设置,IE8下显示Button组件有问题*/
+.r-banner-menu-image {
+	width:60px;
+	height:60px;
+	background-color: rgba(223, 232, 246, 0); 
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#00000000,endColorstr=#00000000);
+}
+/* 标题菜单图片鼠标mouseover,改变背景颜色的透明度*/
+.r-banner-menu-image:hover {
+	background-color: rgba(223, 232, 246, 0.3);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#00DFE8F6,endColorstr=#4CDFE8F6);
+}
+
+.r-banner-menu-image.r-sys {
+	background-image: url(../images/banner/ban_2.png) !important;
+}
+
+.r-banner-menu-image.r-dat {
+	background-image: url(../images/banner/ban_4.png) !important;
+}
+
+.r-banner-menu-image.r-par {
+	background-image: url(../images/banner/ban_6.png) !important;
+}
+
+.r-banner-menu-image.r-lab {
+	background-image: url(../images/banner/ban_8.png) !important;
+}
+
+.r-banner-menu-image.r-inn {
+	background-image: url(../images/banner/ban_10.png) !important;
+}
+
+.r-banner-menu-image.r-out {
+	background-image: url(../images/banner/ban_12.png) !important;
+}
+
+.r-banner-menu-image.r-dec {
+	background-image: url(../images/banner/ban_14.png) !important;
+}
+
+.r-banner-menu-image.r-eng {
+	background-image: url(../images/banner/ban_16.png) !important;
+}
+
+.r-banner-menu-image.r-exp {
+	background-image: url(../images/banner/ban_18.png) !important;
+}
+/* 
+.r-sys.x-btn-pressed {
+	background-image: url(../images/banner/ban_1.png) !important;
+}
+
+.r-dat.x-btn-pressed {
+	background-image: url(../images/banner/ban_3.png) !important;
+}
+
+.r-par.x-btn-pressed {
+	background-image: url(../images/banner/ban_5.png) !important;
+}
+
+.r-lab.x-btn-pressed {
+	background-image: url(../images/banner/ban_7.png) !important;
+}
+
+.r-inn.x-btn-pressed {
+	background-image: url(../images/banner/ban_9.png) !important;
+}
+
+.r-dec.x-btn-pressed {
+	background-image: url(../images/banner/ban_13.png) !important;
+}
+
+.r-eng.x-btn-pressed {
+	background-image: url(../images/banner/ban_15.png) !important;
+}
+
+.r-out.x-btn-pressed {
+	background-image: url(../images/banner/ban_11.png) !important;
+}
+
+.r-exp.x-btn-pressed {
+	background-image: url(../images/banner/ban_17.png) !important;
+}
+ */
+/*------------------左侧panel---------------------*/
+.x-panel-header {
+	height: 26px !important;
+	background-image: url('../images/left/header.png') !important;  
+}
+/*------------------中间tappanel---------------------*/
+.x-tab-bar-top {
+	height: 26px !important;
+	background-image: url('../images/left/header.png') !important; 
+}
+
+.r-main {
+	background-image: url('../images/left/header.png');
+}  
+
+.r-main.x-panel {
+	background-color: #DEEAF4 !important;
+	background-image: url('../images/left/header.png');
+}
+/*------------------首页样式---------------------------*/
+.index-back {
+	background-color: #DEEAF4 !important;
+}
+.index-pie {
+	background-color: #F2F6FA !important;
+}
+
+.index-left {
+	background-color: #E9E9E9 !important;
+}
+
+.x-grid3-row td,.x-grid3-summary-row td {
+	height : 40px;
+	line-height: 40px;
+}
+
+.index-grid-column {
+	height : 35px;
+}
+
+.icon-nav {
+	background-image: url(../images/icon/nav.png) !important;
+}
+
+.icon-tree {
+	background-image: url(../images/icon/tree.png) !important;
+	white-space: nowrap;
+}
+
+.icon-activity {
+	background-image: url(../images/icon/activity.png) !important;
+}
+
+.icon-hr {
+	background-image: url(../images/icon/hr.png) !important;
+}
+
+.icon-system {
+	background-image: url(../images/lib/cog.png) !important;
+}
+
+.icon-user {
+	background-image: url(../images/icon/man.gif) !important;
+}
+.icon-file {
+	background-image: url(../images/icon/download-file.png) !important;
+}
+
+.icon-add {
+	background-image: url(../images/icon/add.png) !important;
+}
+.icon-del {
+	background-image: url(../images/icon/delete.png) !important;
+}
+
+.icon-add-p {
+	background-image: url(../images/icon/add_p.png) !important;
+}
+.icon-del-p {
+	background-image: url(../images/icon/delete_p.png) !important;
+}
+
+.icon-edit {
+	background-image: url(../images/icon/edit.png) !important;
+}
+
+.icon-refresh {
+	background-image: url(../images/icon/refresh.gif) !important;
+}
+
+.icon-grid-list {
+	background-image:url(../images/icon/grid_list.png) !important;
+}
+
+.icon-search-form{
+	background-image: url(../images/icon/search_form.png) !important;
+}
+.icon-form{
+	background-image: url(../images/icon/form.png) !important;
+}
+.icon-search {
+	background-image: url(../images/icon/search.png) !important;
+}
+.icon-open-menu {
+	background-image: url(../images/icon/open_menu.png) !important;
+}
+.icon-save {
+	background-image: url(../images/icon/save.png) !important;
+}
+.icon-reset{
+	background-image:url(../images/icon/reset.png) !important;
+}
+.icon-chart {
+	background-image: url(../images/icon/chart.gif) !important;
+}
+
+.icon-upload {
+	background-image: url(../images/icon/adminFile/upload-file.png) !important;
+}
+
+.icon-unupload {
+	background-image: url(../images/icon/del-file.png) !important;
+}
+
+.icon-download {
+	background-image: url(../images/icon/download-file.png) !important;
+}
+
+.icon-word {
+	background-image: url(../images/icon/word.png) !important;
+}
+
+.icon-pdf {
+	background-image: url(../images/icon/pdf.png) !important;
+}
+
+.icon-excel {
+	background-image: url(../images/icon/excel.png) !important;
+}
+.icon-info {
+	background-image: url(../images/icon/info.gif) !important;
+}
+.icon-logout {
+	background-image: url(../images/icon/logout.png) !important;
+}
+.icon-style {
+	background-image: url(../images/icon/style.png) !important;
+}
+.icon-person-info {
+	background-image: url(../images/icon/person_info.png) !important;
+}
+.icon-person-info-edit{
+	background-image: url(../images/icon/person_info_edit.png) !important;
+}
+.icon-key-edit{
+	background-image: url(../images/icon/key_edit.png) !important;
+}
+.icon-version{
+	background-image: url(../images/icon/version.png) !important;
+}
+.icon-docs{
+	background-image: url(../images/icon/docs.gif) !important;
+}
+.icon-help{
+	background-image: url(../images/icon/help.png) !important;
+}
+.icon-layout{
+	background-image: url(../images/icon/layout.png) !important;
+}
+.icon-grant{
+	background-image: url(../images/icon/grant.png) !important;
+}
+
+.icon-collapse-all{
+	background-image: url(../images/icon/collapse-all.gif) !important;
+}
+.EXEC_RESULT{
+	background-image: url(../images/icon/load_r.png) !important;
+}
+.icon-expand-all{
+	background-image: url(../images/icon/expand-all.gif) !important;
+}
+
+.icon-load-r{
+	background-image: url(../images/icon/load_r.png) !important;
+}
+
+.icon-yes{
+	background-image: url(../images/icon/yes.png) !important;
+}
+
+.icon-no{
+	background-image: url(../images/icon/no.png) !important;
+}
+
+.icon-ok{
+	background-image: url(../images/icon/ok.png) !important;
+}
+
+.icon-cancel{
+	background-image: url(../images/icon/cancel.png) !important;
+}
+.icon-tip{
+	background-image: url(../images/icon/tip.png) !important;
+}
+
+.icon-logout{
+	background-image: url('../images/icon/logout.png') !important;
+}
+.icon-sys-config{
+	background-image: url(../images/icon/sys_config.png) !important;
+}
+.icon-status-away{
+	background-image: url(../images/icon/status_away.png) !important;
+}
+.icon-status-busy{
+	background-image: url(../images/icon/status_busy.png) !important;
+}
+.icon-status-offline{
+	background-image: url(../images/icon/status_offline.png) !important;
+}
+.icon-status-online{
+	background-image: url(../images/icon/status_online.png) !important;
+}
+.icon-user-info{
+	background-image: url(../images/icon/user_info.png) !important;
+}
+.icon-email{
+	background-image: url(../images/icon/email.png) !important;
+}
+.icon-email-list{
+	background-image: url(../images/icon/email_list.png) !important;
+}
+.icon-im{
+	background-image: url(../images/icon/im.png) !important;
+}
+.icon-note{
+	background-image: url(../images/icon/note.png) !important;
+}
+.icon-link{
+	background-image: url(../images/icon/link.png) !important;
+}
+.icon-notice{
+	background-image: url(../images/icon/notice.png) !important;
+}
+.icon-news{
+	background-image: url(../images/icon/news.png) !important;
+}
+.icon-user-set{
+	background-image: url(../images/icon/user_set.png) !important;
+}
+.icon-accordion{
+	background-image: url(../images/icon/accordion.gif) !important;
+}
+
+.icon-workflow{
+	background-image: url(../images/icon/workflow.png) !important;
+}
+.icon-reload{
+	background-image: url(../images/icon/reload.png) !important;
+}
+
+.x-message-box .icon-saving {
+    background:transparent url(../images/icon/download.gif) no-repeat bottom left;
+    height:46px;
+}
+
+.icon-updateFlowCfg {
+	background-image: url(../images/icon/updateFlowCfg.png) !important;
+}
+
+.icon-updateFlowDependency {
+	background-image: url(../images/icon/updateFlowDependency.png) !important;
+}
+
+.icon-stop {
+	background-image: url(../images/icon/stop.png) !important;
+}
+
+.methodIcon{
+	background-image: url(../images/dispatch/method.png) !important;
+}
+
+.classIcon{
+	background-image: url(../images/dispatch/class.png) !important;
+}
+
+/*  任务链调度  */
+.task-start{
+	background-image: url(../images/icon/task_start.png) !important;
+}
+.task-start-undo{
+	background-image: url(../images/icon/task_start_un.png) !important;
+}
+.task-suspend{
+	background-image: url(../images/icon/task_suspend.png) !important;
+}
+.task-suspend-undo{
+	background-image: url(../images/icon/task_suspend_un.png) !important;
+}
+.task-resume{
+	background-image: url(../images/icon/task_resume.png) !important;
+}
+.task-resume-undo{
+	background-image: url(../images/icon/task_resume_un.png) !important;
+}
+.task-terminate{
+	background-image: url(../images/icon/task_terminate.png) !important;
+}
+.task-detail{
+	background-image: url(../images/icon/task_detail.png) !important;
+}
+.task-history{
+	background-image: url(../images/icon/task_history.png) !important;
+}

@@ -1,0 +1,138 @@
+v\:group,v\:rect,v\:imagedata,v\:oval,v\:line,v\:polyline,v\:stroke,v\:textbox { display:inline-block;background:transparent }
+.GooFlow{
+	background:#F5F5F5;border:#ccc 1px solid;font: 0.8em Microsoft Yahei;
+	-moz-user-select:none;-webkit-user-select:none;border-radius:4px;color:#333
+}
+.GooFlow i{font: 1em;display:block;width:24px;height:26px;overflow:hidden}
+/* .GooFlow_head{clear:both;height:20px;padding:1px;border-bottom:#00B4E1 2px solid;} */
+.GooFlow_head label{
+	font-weight:bold;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:18px;padding:2px;width:170px;text-align:center;
+	background:#00B4E1;float:left;color:#fff;border-radius:3px 0px 0px 0px;overflow:hidden;margin:-1px 4px 0px -1px;
+}
+.GooFlow_head span{float:left;height:22px;width:0px;overflow:hidden;border-left:#3892D3 1px solid;margin:0px 3px;}
+/* .GooFlow_head_btn{display:block;border:0px;height:18px;width:18px;cursor:default;padding:1px;margin:0px 3px;float:left;outline:none;blr:expression(this.onFocus=this.blur());} */
+.GooFlow_head_btn{display:block;border:0px;height:28px;width:26px;cursor:default;padding:1px;margin:0px 3px;float:left;outline:none;blr:expression(this.onFocus=this.blur());}
+/* .GooFlow_head_btn i{display:inline-block;overflow:hidden;width:18px;height:18px;border:0px;} */
+.GooFlow_head_btn i{display:inline-block;overflow:hidden;border:0px;}
+/* .GooFlow_head_btn:hover{border-radius:2px;background:#FFBF00} */
+.GooFlow_head_btn:hover{border-radius:2px;background:#DEEAF4}
+.GooFlow_head_btn:hover i{}
+.GooFlow_tool{float:left;padding:0px 3px;overflow:hidden;clear:left;border-right:#ccc 1px solid}
+/* .GooFlow_tool_div{overflow:hidden;border-radius:2px;width:24px;padding:2px} */
+.GooFlow_tool_div{overflow:hidden;border-radius:2px;width:30px;padding:1px}
+.GooFlow_tool span{height:0px;overflow:hidden;border-top:#ccc 1px solid;margin:3px 1px;clear:both;display:block;}
+/* .GooFlow_tool_btn{display:block;border:0px;height:18px;width:18px;cursor:default;padding:2px;margin:3px 1px;outline:none;blr:expression(this.onFocus=this.blur());} */
+.GooFlow_tool_btn{display:block;border:0px;width:27px;height:26px;cursor:default;padding:1px;margin:3px 1px;outline:none;blr:expression(this.onFocus=this.blur());}
+/* .GooFlow_tool_btn i{display:block;overflow:hidden;width:18px;height:18px;border:0px} */
+.GooFlow_tool_btn i{display:block;overflow:hidden;width:24px;height:26px;border:0px}
+/* .GooFlow_tool_btn:hover{border-radius:3px;padding:0px;border:#99B1CE 1px solid;width:20px;height:20px;background:#fff} */
+.GooFlow_tool_btn:hover{/* border-radius:3px;padding:0px;border:#99B1CE 1px solid;width:20px;height:20px;background:#fff */}
+/* .GooFlow_tool_btn:hover i{margin:1px;border-radius:2px} */
+.GooFlow_tool_btn:hover i{/* margin:1px;border-radius:2px */}
+/* .GooFlow_tool_btndown{
+	cursor:default;margin:3px 1px;outline:none;blr:expression(this.onFocus=this.blur());
+	border-radius:3px;padding:2px;background:#FFBF00;display:block;
+} */
+.GooFlow_tool_btndown{
+	border:#99B1CE 1px solid;cursor:default;width:25px;height:26px;margin:3px 1px;outline:none;blr:expression(this.onFocus=this.blur());
+	border-radius:3px;padding:1px;background:#DEEAF4;display:block;
+}
+/* .GooFlow_tool_btndown i{display:block;overflow:hidden;width:18px;height:18px;border-radius:2px} */
+.GooFlow_tool_btndown i{display:block;overflow:hidden;width:24px;height:26px;border-radius:2px}
+.GooFlow_work{float:right;margin:0px 3px 3px 0px;border:#F5F5F5 1px solid;position:relative;overflow:scroll;}
+.GooFlow_work .GooFlow_work_inner{background-image:url(../images/gooflow_blank2.gif);position:relative;overflow:hidden;}
+.GooFlow_work .GooFlow_work_group{cursor:default;position:absolute;overflow:hidden;top:0px;left:0px}
+.GooFlow_work text{color:#fff}
+
+.GooFlow_work svg{display:block;position:absolute}
+.GooFlow_work v\:group{position:relative;display:block}
+.GooFlow_work v\:group v\:line{overflow:visible}
+.GooFlow_work v\:group v\:polyline{overflow:visible}
+.GooFlow_work v\:group div{cursor:text;position:absolute;overflow:visible;display:inline;float:left;white-space: nowrap}
+.GooFlow_work .draw{color:#ff3300}
+
+.GooFlow_item{
+	position:absolute;background:#A1DCEB;border:#A1DCEB solid 1px;
+	border-radius:3px;background-color:#C1DCFC;box-shadow:1px 1px 2px rgba(99,99,99,2);
+}
+.GooFlow table{padding:1px;border-radius:2px}
+.GooFlow td{ vertical-align:middle;text-align:center;padding:0px;cursor:default;word-wrap:break-word;word-break:break-all}
+.GooFlow .ico{width:18px;cursor:move}
+/* .GooFlow i{display:block;width:18px;height:18px;overflow:hidden} */
+.GooFlow .item_round{border-radius:11px;border:#C1DCFC solid 1px;width:22px;height:22px; overflow:visible}
+.GooFlow .item_round table{border:0px;padding:2px;width:22px;height:22px}
+.GooFlow .item_round .span{
+	display:block;text-align:center; position:absolute;top:24px;left:-28px;width:80px;overflow:visible;text-align:center;
+	padding:0px;cursor:default;word-wrap: break-word;word-break:break-all
+}
+.GooFlow div .rs_right{overflow:hidden;position:absolute;right:-1px;top:-1px;height:100%;width:6px;cursor:w-resize}
+.GooFlow div .rs_bottom{overflow:hidden;position:absolute;left:-1px;bottom:-1px;width:100%;height:6px;cursor:n-resize}
+.GooFlow div .rs_rb{
+	position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;overflow:hidden;cursor:nw-resize;background:url(../images/gooflow_tip.png) no-repeat 0px -8px;
+}
+.GooFlow div .rs_close{
+	position:absolute;right:1px;top:1px;width:7px;height:7px;overflow:hidden;cursor:pointer;background:url(../images/gooflow_tip.png) no-repeat 0px 0px
+}
+.GooFlow .rs_ghost{
+	position:absolute;display:none;overflow:hidden;border:#8EA4C1 1px dashed; background:#D9E8FB;
+	filter:Alpha(Opacity=60);-moz-opacity:0.6;opacity: 0.6;z-index:10
+}
+.GooFlow .item_focus{border:#3892D3 1px solid}
+.GooFlow .item_mark{border:#ff3300 1px solid}
+.GooFlow .item_mark td{cursor:crosshair}
+.GooFlow textarea{position:absolute;border:#3892D3 1px solid;display:none;font: 1em Microsoft Yahei;overflow-y:visible;width:100px;z-index:10001}
+
+.GooFlow .GooFlow_line_oper{
+	width:70px;height:15px;background-color:#D8E8FC;border:#7DA2CE 1px solid;position:absolute;
+	filter:Alpha(Opacity=50);-moz-opacity:0.5;opacity: 0.5;z-index:10000;
+}
+
+.GooFlow .GooFlow_line_mp{
+	width:9px;height:9px;filter:Alpha(Opacity=40);-moz-opacity:0.4;opacity:0.4;overflow:hidden;
+	position:absolute;z-index:9999;background:#333;cursor:crosshair
+}
+
+.GooFlow .GooFlow_line_move{filter:Alpha(Opacity=50);-moz-opacity:0.5;opacity:0.5;overflow:hidden;position:absolute;z-index:9999;background:url(0) no-repeat}
+.GooFlow .GooFlow_line_oper i{display:inline-block;width:15px;height:15px;margin-left:2px;cursor:pointer}
+.GooFlow .b_l1{background:url(../images/GooFlow_line_oper.png) no-repeat 1px 1px}
+.GooFlow .b_l2{background:url(../images/GooFlow_line_oper.png) no-repeat 1px -14px}
+.GooFlow .b_l3{background:url(../images/GooFlow_line_oper.png) no-repeat 1px -29px}
+.GooFlow .b_x{background:url(../images/GooFlow_line_oper.png) no-repeat 1px -44px;margin-left:10px}
+/* "start round","end round","java","node","chat","complex" */
+/* .GooFlow .ico_cursor{background:url(../images/gooflow_icon.png) no-repeat 2px -20px} */
+.GooFlow .ico_cursor{background:url(../images/gooflow_arrow.png) no-repeat}
+/* .GooFlow .ico_start{background:url(../images/gooflow_icon.png) no-repeat -19px -20px} */
+.GooFlow .ico_start{background:url(../images/gooflow_start.png) no-repeat}
+/* .GooFlow .ico_end{background:url(../images/gooflow_icon.png) no-repeat -39px -20px} */
+.GooFlow .ico_end{background:url(../images/gooflow_end.png) no-repeat}
+.GooFlow .ico_fork{background:url(../images/gooflow_icon.png) no-repeat -59px -20px}
+.GooFlow .ico_join{background:url(../images/gooflow_icon.png) no-repeat -78px -20px}
+/* .GooFlow .ico_direct{background:url(../images/gooflow_icon.png) no-repeat -137px -20px} */
+.GooFlow .ico_direct{background:url(../images/gooflow_line.png) no-repeat}
+.GooFlow .ico_group{background:url(../images/gooflow_icon.png) no-repeat -96px -20px}
+/* .GooFlow .ico_complex{background:url(../images/gooflow_icon.png) no-repeat -116px -20px} */
+.GooFlow .ico_complex{background:url(../images/gooflow_subflow.png) no-repeat}
+.GooFlow .ico_node{background:url(../images/gooflow_icon.png) no-repeat -19px -45px}
+.GooFlow .ico_task{background:url(../images/gooflow_icon.png) no-repeat 2px -45px}
+.GooFlow .ico_chat{background:url(../images/gooflow_icon.png) no-repeat -38px -45px}
+.GooFlow .ico_state{background:url(../images/gooflow_icon.png) no-repeat -59px -45px}
+.GooFlow .ico_plug{background:url(../images/gooflow_icon.png) no-repeat -135px -45px}
+.GooFlow .ico_menu{background:url(../images/gooflow_icon.png) no-repeat 1px -65px}
+.GooFlow .ico_sound{background:url(../images/gooflow_icon.png) no-repeat -18px -65px}
+.GooFlow .ico_java{background:url(../images/gooflow_icon.png) no-repeat 2px -65px}
+.GooFlow .ico_topo{background:url(../images/gooflow_icon.png) no-repeat -117px -45px}
+/* .GooFlow .ico_linux{background:url(../images/shell.png)  no-repeat} */
+.GooFlow .ico_linux{background:url(../images/gooflow_shell.png)  no-repeat}
+/* .GooFlow .ico_edit{background:url(../images/icon/edit.png)  no-repeat} */
+.GooFlow .ico_edit{background:url(../images/gooflow_edit.png)  no-repeat}
+.GooFlow .ico_open{background:url(../images/gooflow_icon.png) no-repeat -19px 1px}
+/* .GooFlow .ico_new{background:url(../images/gooflow_icon.png) no-repeat 2px 1px} */
+.GooFlow .ico_new{background:url(../images/gooflow_add.png) no-repeat}
+.GooFlow .ico_reload{background:url(../images/gooflow_icon.png) no-repeat -97px 1px}
+/* .GooFlow .ico_save{background:url(../images/gooflow_icon.png) no-repeat -39px 1px} */
+.GooFlow .ico_save{background:url(../images/gooflow_save.png) no-repeat}
+/* .GooFlow .ico_undo{background:url(../images/gooflow_icon.png) no-repeat -58px 1px} */
+.GooFlow .ico_undo{background:url(../images/gooflow_delete.png) no-repeat}
+.GooFlow .ico_redo{background:url(../images/gooflow_icon.png) no-repeat -78px 1px}
+/* .GooFlow .ico_mutiselect{background:url(../images/gooflow_icon.png) no-repeat -156px 1px} */
+.GooFlow .ico_mutiselect{background:url(../images/gooflow_view.png) no-repeat}

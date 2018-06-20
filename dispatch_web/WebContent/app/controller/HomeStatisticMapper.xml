@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.czbank.rdmp.dao.HomeStatisticDao">
+
+	<resultMap type="com.sunyard.czbank.rdmp.model.HomeStatisticModel"
+		id="HomeStatisticModel">
+		<result property="flowName" column="flow_name" />
+		<result property="taskName" column="task_name" />
+		<result property="executeTime" column="executeTime" />
+		<result property="workDate" column="work_date" />
+	</resultMap>
+	
+	<resultMap type="com.sunyard.czbank.rdmp.model.SysCfgModel"
+		id="SysCfgModel">
+		<result property="id" column="id" />
+		<result property="sysType" column="sys_type" />
+		<result property="sysKey" column="sys_key" />
+		<result property="sysValue" column="sys_value" />
+		<result property="createBy" column="create_by" />
+		<result property="createDate" column="create_date" />
+		<result property="updatedBy" column="updated_by" />
+		<result property="updatedDate" column="updated_date" />
+		<result property="sysDesc" column="sys_desc" />
+	</resultMap>
+	
+	<select id="selectHomeTableList" resultMap="HomeStatisticModel"
+		parameterType="com.sunyard.czbank.rdmp.model.HomeStatisticModel">
+		select flow_name,task_name,executeTime,work_date from 
+        (select 
+	      flow_name as flow_name,
+	      task_name as task_name,
+	      round((TO_DATE(TO_CHAR(end_time,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS')-TO_DATE(TO_CHAR(start_time,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS'))*24*60,2) as executeTime,
+	      work_date as work_date
+	      from RDMP_TASKCTL_LOG_HIS 
+	      <where>
+		      	1=1
+				<if test="workDate != null &amp;&amp; workDate.length()>0">
+					and work_date = #{workDate}
+				</if>
+	      </where>
+	      order by executeTime desc
+	      
+        )T1 
+        <where>
+        rownum &lt; #{topParam}
+        </where> 
+	</select>
+	
+	<select id="selectHomeTableNum" resultType="int"
+		parameterType="com.sunyard.czbank.rdmp.model.HomeStatisticModel">
+		select count(*) from 
+        (select 
+	      flow_name as flow_name,
+	      task_name as task_name,
+	      round((TO_DATE(TO_CHAR(end_time,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS')-TO_DATE(TO_CHAR(start_time,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS'))*24*60,2) as executeTime,
+	      work_date as work_date
+	      from RDMP_TASKCTL_LOG_HIS 
+	      <where>
+		      	1=1
+				<if test="workDate != null &amp;&amp; workDate.length()>0">
+					and work_date = #{workDate}
+				</if>
+	      </where>
+	      order by executeTime desc
+	      
+        )T1 
+        <where>
+        rownum &lt; #{topParam}
+        </where> 
+	</select>
+	
+	<select id="selectHomePieList" resultMap="HomeStatisticModel"
+		parameterType="com.sunyard.czbank.rdmp.model.HomeStatisticModel">
+		select round((TO_DATE(TO_CHAR(end_time,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS')-TO_DATE(TO_CHAR(start_time,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS'))*24*60,2) as executeTime
+	      from RDMP_TASKCTL_LOG_HIS
+        <where>
+        	1=1
+        	<if test="workDate != null &amp;&amp; workDate.length()>0">
+				and work_date = #{workDate}
+			</if>
+        </where> 
+	</select>
+	
+	<select id="selectSysCfg" resultMap="SysCfgModel"
+		parameterType="com.sunyard.czbank.rdmp.model.SysCfgModel">
+		select sys_key,sys_value from RDMP_SYS_CONFIG
+        <where>
+        	sys_type = #{sysType}
+        </where> 
+        order by id
+	</select>
+	
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.RoleUserDao">
+	<resultMap type="com.sunyard.dispatch.common.model.Role" id="Role">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="type" column="type" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_updated" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	
+	<select id="getRoles"   resultMap="Role" >
+		select id,name from sys_role_tb
+	</select>
+	
+</mapper>

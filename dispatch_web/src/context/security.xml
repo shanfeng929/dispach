@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<http use-expressions="true">
+		<intercept-url pattern="/resources/**" access="permitAll"/>
+        <intercept-url pattern="/favicon.ico" access="permitAll"/>
+        <intercept-url pattern="/app/**" access="permitAll"/>
+        <intercept-url pattern="/download/**" access="permitAll"/>
+        <intercept-url pattern="/login/**" access="permitAll"/>
+        <intercept-url pattern="/**" access="isAuthenticated()"/>
+
+	
+		<form-login login-page="/login/login" username-parameter="j_username"
+                    password-parameter="j_password" authentication-failure-url="/login/fail"
+			default-target-url="/main" always-use-default-target="true" />
+		<logout logout-success-url="/login.jsp" logout-url="/login/logout"
+			invalidate-session="true" />
+
+		<session-management>
+			<concurrency-control max-sessions="1"
+				error-if-maximum-exceeded="false" expired-url="/login/expired" />
+		</session-management>
+
+		<!-- <custom-filter ref="filterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR" /> -->
+	</http>
+
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="userService">
+			<password-encoder hash="bcrypt" />
+		</authentication-provider>
+	</authentication-manager>  
+
+	<beans:bean id="customSecurityMetadataSource" class="com.sunyard.dispatch.security.interceptor.CustomFilterInvocationSecurityMetadataSource">
+		<beans:constructor-arg name="operationService"
+			ref="operationService"></beans:constructor-arg>
+	</beans:bean>
+
+	<!-- 使用Spring security3提供的过滤器,并将过滤器默认的认证和授权组件替换为我们已经定义的认证和授权组件 -->
+	<beans:bean id="filterSecurityInterceptor"
+		class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager" />
+		<beans:property name="securityMetadataSource" ref="customSecurityMetadataSource" />
+	</beans:bean>
+</beans:beans>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.dao.DataSourceDao">
+
+	<resultMap type="com.sunyard.dispatch.model.DataSourceModel" id="dataSource">
+		<id property="dbId" column="DB_ID" />
+		<result property="dbName" column="DB_NAME" />
+		<result property="driverName" column="DRIVER_NAME" />
+		<result property="dbUrl" column="DB_URL" />
+		<result property="userName" column="USER_NAME" />
+		<result property="password" column="PASSWORD" />
+	</resultMap>
+
+	<select id="getDataSourceList" parameterType="com.sunyard.dispatch.model.form.DataSourceForm"
+		resultMap="dataSource">
+		select * from (SELECT rownum as rm, t.* FROM DISPATCH_TASKETL_DATASOURCE t where rownum &lt; ${end}) t1 where t1.rm &gt; ${start} 
+		<if test=" null!=dbName and ''!=dbName ">
+			AND t1.DB_NAME LIKE '%${dbName}%'
+		</if>
+	</select>
+	
+	<select id="getDataSourceCount" parameterType="com.sunyard.dispatch.model.form.DataSourceForm"
+		resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_DATASOURCE WHERE 1=1
+		<if test=" null!=dbName and ''!=dbName ">
+			AND DB_NAME LIKE '%${dbName}%'
+		</if>
+	</select>
+	
+	<select id="findDataSourceById" parameterType="java.lang.Integer" resultMap="dataSource">
+		SELECT * FROM DISPATCH_TASKETL_DATASOURCE WHERE DB_ID = #{dbId}
+	</select>
+	
+	<select id="checkIsRelated" parameterType="Integer" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_TASKNAME WHERE TASK_REMOTE = #{dbId} AND TASK_BELONG IN (2,5)
+	</select>
+	
+	<insert id="dataSourceAdd" parameterType="com.sunyard.dispatch.model.form.DataSourceForm">
+		INSERT INTO DISPATCH_TASKETL_DATASOURCE(DB_ID,DB_NAME,DRIVER_NAME,DB_URL,USER_NAME,PASSWORD) VALUES
+		(
+		DISPATCH_TASKETL_DATASOURCE_DB.nextval,
+		#{dbName},
+		#{driverName},
+		#{dbUrl},
+		#{userName},
+		#{password}
+		)
+	</insert>
+	
+	<update id="dataSourceUpdate" parameterType="com.sunyard.dispatch.model.form.DataSourceForm">
+		UPDATE DISPATCH_TASKETL_DATASOURCE SET 
+		<if test=" null!=driverName and ''!=driverName ">
+			DRIVER_NAME = #{driverName},
+		</if>
+		<if test=" null!=dbUrl and ''!=dbUrl ">
+			DB_URL = #{dbUrl},
+		</if>
+		<if test=" null!=userName and ''!=userName ">
+			USER_NAME = #{userName},
+		</if>
+		<if test=" null!=password and ''!=password ">
+			PASSWORD = #{password},
+		</if>
+		DB_NAME = #{dbName} WHERE DB_ID = #{dbId} 
+	</update>
+	
+	<delete id="dataSourceDel" parameterType="java.lang.Integer">
+		DELETE FROM DISPATCH_TASKETL_DATASOURCE WHERE DB_ID = ${dbId}
+	</delete>
+	
+	<select id="checkUnique" parameterType="com.sunyard.dispatch.model.form.DataSourceForm" resultType="Integer">
+		SELECT COUNT(1) FROM DISPATCH_TASKETL_DATASOURCE 
+		WHERE 
+		<if test="dbId!=null and ''!=dbId">
+			DB_ID &lt;&gt; #{dbId} AND
+		</if>
+		(DB_NAME=#{dbName} OR (DB_URL=#{dbUrl} AND USER_NAME=#{userName}))
+	</select>
+		
+</mapper>

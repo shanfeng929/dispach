@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunyard.dispatch.common.dao.UserDao">
+
+	<resultMap type="com.sunyard.dispatch.common.model.User" id="User">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="loginName" column="login_name" />
+		<result property="realName" column="real_name" />
+		<result property="alpha" column="alpha" />
+		<result property="password" column="password" />
+		<result property="phone" column="phone" />
+		<result property="post" column="post" />
+		<result property="expiredAt" column="expired_at" />
+		<result property="passwordExpiredAt" column="password_expired_at" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_updated" />
+		<result property="dataStatus" column="data_status" />
+		<association property="organ" javaType="com.sunyard.dispatch.common.model.Organ"
+			columnPrefix="organ_" >
+			<id property="id" column="id" />
+			<result property="code" column="code" />
+			<result property="name" column="name" />
+			<result property="shortName" column="shortName" />
+			<result property="path" column="path" />
+			<result property="parent" column="parent" />
+			<result property="leaf" column="leaf" />
+			<result property="disOrder" column="disOrder" />
+			<result property="description" column="description" />
+		</association>
+		<association property="userGroup"  javaType="com.sunyard.dispatch.common.model.UserGroup"
+			columnPrefix="userGroup_" > 
+			<id property="id" column="id" />
+			<result property="code" column="code" />
+			<result property="name" column="name" />
+			<result property="description" column="description" />
+			<result property="parentId" column="parent_Id" />
+		</association>
+		<collection property="roles"
+			ofType="com.sunyard.dispatch.common.model.Role" resultMap="Role"
+			columnPrefix="role_" />
+	</resultMap>
+
+	<resultMap type="com.sunyard.dispatch.common.model.Role" id="Role">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="type" column="type" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_updated" />
+		<result property="dataStatus" column="data_status" />
+		<collection property="authorities"
+			ofType="com.sunyard.dispatch.common.model.Authority" resultMap="Authority"
+			columnPrefix="auth_" />
+	</resultMap>
+
+	<resultMap type="com.sunyard.dispatch.common.model.Authority"
+		id="Authority">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="type" column="type" />
+		<result property="creator" column="creator_id" />
+		<result property="modifier" column="modifier_id" />
+		<result property="dateCreated" column="date_created" />
+		<result property="dateUpdated" column="date_updated" />
+		<result property="dataStatus" column="data_status" />
+	</resultMap>
+	<resultMap type="com.sunyard.dispatch.common.model.UserRole"
+		id="UserRole">
+		<result property="userId" column="user_id" />
+		<result property="roleId" column="role_id" />
+	</resultMap>
+	
+	
+	<resultMap type="com.sunyard.dispatch.common.model.UserGroup" id="UserGroup">
+		<id property="id" column="userGroup_id" />
+		<result property="code" column="userGroup_code" />
+		<result property="name" column="userGroup_name" />
+		<result property="description" column="userGroup_des" />
+		<result property="parentId" column="userGroupParent_id" />
+	</resultMap>
+	
+	<select id="findUniqueUserByLoginName" parameterType="java.lang.String"
+		resultMap="User">
+		select 
+			cu.id id,
+			cu.code code,
+			cu.login_name login_name,
+			cu.real_name real_name,
+			cu.alpha alpha,
+			cu.password password,
+			cu.phone phone,
+			cu.post post,
+			cu.expired_at expired_at,
+			cu.password_expired_at password_expired_at,
+			cu.creator_id creator_id,
+			cu.modifier_id modifier_id,
+			cu.date_created date_created,
+			cu.date_modified date_modified,
+			cu.data_status data_status,
+			cr.id role_id,
+			cr.code role_code,
+			cr.name role_name,
+			cr.description role_description,
+			cr.creator_id role_creator_id,
+			cr.modifier_id role_modifier_id,
+			cr.date_created role_date_created,
+			cr.date_modified role_date_modified,
+			cr.data_status role_data_status,
+			ca.id role_auth_id,
+			ca.code role_auth_code,
+			ca.name role_auth_name,
+			ca.description role_auth_description,
+			ca.creator_id role_auth_creator_id,
+			ca.modifier_id role_auth_modifier_id,
+			ca.date_created role_auth_date_created,
+			ca.date_modified role_auth_date_modified,
+			ca.data_status role_auth_data_status,
+			ug.id userGroup_id,
+			ug.name userGroup_name,
+			ug.code userGroup_code,
+			ug.description userGroup_description,
+			ug.parent_id userGroup_parent_id
+		from  SYS_USER_TB cu
+		left join  SYS_MAP_USER_ROLE_TB cmur on cmur.user_id = cu.id
+		left join  SYS_ROLE_TB cr on cr.id = cmur.role_id and cr.data_status = 0
+		left join  SYS_MAP_ROLE_AUTH_TB cmra on cmra.role_id = cr.id
+		left join  SYS_AUTHORITY_TB ca on ca.id = cmra.auth_id and ca.data_status = 0
+		left join  SYS_MAP_USER_USERGROUP_TB muu on muu.user_id = cu.id
+		left join  SYS_USER_GROUP_TB ug on ug.id = muu.usergroup_id
+		where  cu.login_name = #{login_name} and cu.data_status =0
+	</select>
+		
+	
+	<select id="count" parameterType="com.sunyard.dispatch.common.model.form.UserForm" resultType="java.lang.Integer">
+		select count(id) from  SYS_USER_TB syt
+		<where>
+			<if test="loginName != null &amp;&amp; loginName.length()>0">
+				and syt.login_name=#{loginName}
+			</if>
+		</where>
+	</select>
+	<select id="findUserListByName" parameterType="com.sunyard.dispatch.common.model.form.UserForm"  resultMap="User" >
+		
+		select * from (
+		select 
+      	syt.id id, 
+        sot.name organ_name,
+        srt.name role_name,
+        syt.login_name login_name,
+        syt.real_name real_name,
+        syt.password password,
+        syt.post post,
+        syt.phone phone,
+        syt.data_status data_status,
+        syt.date_modified date_modified
+        from  SYS_USER_TB syt left join  SYS_MAP_USER_ROLE_TB smur on syt.id=smur.user_id
+        left join  SYS_ROLE_TB srt on smur.role_id=srt.id
+        left join SYS_MAP_USER_ORGAN_TB smut on smut.user_id =syt.id
+        left join SYS_ORGAN_TB sot on sot.id = smut.organ_id
+      
+		<where>
+			<if test="loginName != null &amp;&amp; loginName.length()>0">
+				and syt.login_name like CONCAT('%','${loginName}','%')
+			</if>
+		</where>
+		) temp_inner order by temp_inner.date_modified desc limit #{start},#{limit}
+		
+	</select>
+	<update id="disabledUser" parameterType="java.util.List" >
+		update  SYS_USER_TB 	set data_status=4 where id in
+		<foreach collection="list" item = "list" open="(" separator="," close=")">
+			#{list}
+		</foreach>
+	</update>
+	<update id="modifyPassword" >
+		update  SYS_USER_TB set password=#{1} where id=#{0}
+	</update>
+	<select id="selectUserById" parameterType="java.lang.Integer" resultMap="User">
+		select
+			sugt.id userGroup_id,
+         	sugt.name userGroup_name ,
+			syt.id id, 
+		    sot.name organ_name,
+		    sot.id organ_id,
+		    sot.code organ_code,
+		    srt.name role_name,
+		    srt.id role_id, 
+		    syt.login_name login_name,
+		    syt.real_name real_name,
+		    syt.password password,
+		    syt.post post,
+		    syt.phone phone
+            from  SYS_USER_TB syt left join  SYS_MAP_USER_ROLE_TB smur on syt.id=smur.user_id
+            left join  SYS_ROLE_TB srt on smur.role_id=srt.id
+ 			left join SYS_MAP_USER_ORGAN_TB smut on smut.user_id =syt.id
+            left join SYS_ORGAN_TB sot on sot.id = smut.organ_id
+ 			left join  SYS_MAP_USER_USERGROUP_TB smuut on smuut.user_id=syt.id
+      		left join  SYS_USER_GROUP_TB sugt on sugt.id=smuut.usergroup_id
+ 			where syt.id=#{id}
+	</select>
+	<select id="selectLgNameById"   resultType="java.lang.String">
+		select  login_name from  SYS_USER_TB where id=#{id}
+	</select>
+	
+	<select id="repeatedUser" parameterType="com.sunyard.dispatch.common.model.form.UserForm" resultType="java.lang.Integer">
+		select count(id) from  SYS_USER_TB where login_name=#{userName}
+	</select>
+	
+	<update id="resetPwd" parameterType="java.lang.Integer" >
+		update  SYS_USER_TB set password='$2a$10$D6enx5E4W3JvKHus8YcAPOrj8OLnjL.y9eTUvY91EMIA9yejYwiTa'
+		where id=#{id}
+	</update>
+	
+	<update id="modifyUserTb" parameterType="com.sunyard.dispatch.common.model.form.UserForm">
+		update  SYS_USER_TB set
+		login_name=#{userName,jdbcType=VARCHAR},
+		real_name=#{realName,jdbcType=VARCHAR},
+		password=#{password,jdbcType=VARCHAR},
+		phone=#{phone,jdbcType=VARCHAR},
+		post=#{post,jdbcType=VARCHAR},
+		date_modified=CURRENT_TIMESTAMP
+		where id=#{id,jdbcType=INTEGER}
+	</update>
+	<update id="modifyUserOrganTb" parameterType="com.sunyard.dispatch.common.model.UserOrgan">
+		update  SYS_MAP_USER_ORGAN_TB set
+		organ_id=#{organId,jdbcType=INTEGER}
+		where user_id=#{userId,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteUrRe" parameterType="com.sunyard.dispatch.common.model.form.UserForm">
+		delete from  SYS_MAP_USER_ROLE_TB where user_id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<insert id="insertUrRe" parameterType="java.util.List">
+		insert into  SYS_MAP_USER_ROLE_TB(user_id,role_id )
+		<foreach item="item" index="" collection="list" separator=" union all " >
+			select #{item.userId} user_id,#{item.roleId} role_id from dual
+		</foreach>
+	</insert>
+	
+	<insert id="insertUserTb" useGeneratedKeys="true" keyProperty="id" parameterType="com.sunyard.dispatch.common.model.form.UserForm">
+		insert into  SYS_USER_TB(login_name,real_name,password,phone,post,date_created,data_status) values
+		(
+		#{userName},
+		#{realName},
+		#{password},
+		#{phone},
+		#{post},
+		CURRENT_TIMESTAMP,0)
+	</insert>
+	
+	<insert id="insertUserOrgan" parameterType="com.sunyard.dispatch.common.model.UserOrgan">
+		insert into  SYS_MAP_USER_ORGAN_TB(user_id,organ_id) values
+		(#{userId,jdbcType=INTEGER},
+		#{organId,jdbcType=INTEGER})
+	</insert>
+	
+	<select id="defaultUserGroup" resultMap="UserGroup">
+		 select  
+        	sugt.id id,
+        	sugt.name name
+        from  SYS_USER_GROUP_TB sugt
+        where sugt.id=1 
+	</select>
+	
+	<delete id="deleteUserUserGroup" parameterType="java.lang.Integer" >
+		 delete from  SYS_MAP_USER_USERGROUP_TB where user_id=#{id}
+	</delete>
+	<insert id="insertUserUserGroup" parameterType="java.util.List">
+<!-- 		insert into  sys_map_user_usergroup_tb(user_id,usergroup_id )
+		<foreach item="item" index="" collection="list" separator=" union all " >
+			select #{item.userId} user_id,#{item.userGroupId} usergroup_id from dual
+		</foreach> -->
+	</insert>
+	
+	<delete id="deleteUserById" parameterType="java.lang.Integer" >
+		 delete from  SYS_USER_TB where id=#{id}
+	</delete>
+	
+	<select id="selectUserRole" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select
+        	sugt.role_id id
+        from  SYS_MAP_USER_ROLE_TB sugt
+        where sugt.user_id=#{id}
+	</select>
+	
+	<select id="selectCurrency" resultType="java.util.Map">
+		select CRNCY_CD id,CRNCY_NM name from cmnref.DIM_CURRENCY
+	</select>
+</mapper>
